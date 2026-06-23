@@ -11,9 +11,20 @@ const SPONSOR_LOGOS = [
   "vector-decorative-kangaroo-patterned-design-44625880.jpeg"
 ];
 
+const SHAAN_GALLERY = [
+  { file: "1.jpg", caption: "Fueling big ideas & charting out business blueprints" },
+  { file: "2.jpg", caption: "Dreaming big, looking to the future" },
+  { file: "3.jpg", caption: "Always looking at angles from a unique perspective" },
+  { file: "4.jpg", caption: "Inspired by nature, precision, and local wildlife" },
+  { file: "5.jpg", caption: "Family team building & exploring innovative designs" },
+  { file: "6.jpg", caption: "Scouting out community inspiration across the globe" },
+  { file: "7.jpg", caption: "Right at home under the Sydney lights, ready to build" }
+];
+
 export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [lightbox, setLightbox] = useState({ isOpen: false, product: null, index: 0 });
+  const [shaanIndex, setShaanIndex] = useState(0);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
@@ -24,7 +35,7 @@ export default function Home() {
   const handleCheckout = (e) => {
     e.preventDefault();
     setOrderSubmitted(true);
-    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Price:* $${selectedProduct.price.toFixed(2)}\n\n*Customer:*\n- Name: ${name}\n- Phone: ${whatsapp}\n\n*Customization Specs:*\n- Fulfillment: ${deliveryMethod}\n- Text/Specs: "${customText}"\n\n--- \n👉 Let's head to the garage and build this!`;
+    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Price:* $${selectedProduct.price.toFixed(2)}\n\n*Customer:*\n- Name: ${name}\n- Phone: ${whatsapp}\n\n*Specs:* "${customText}"\n- Fulfillment: ${deliveryMethod}`;
     window.open(`https://wa.me/61412345678?text=${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -60,7 +71,6 @@ export default function Home() {
             return (
               <div key={product.id} className="bg-white border border-neutral-200/60 rounded-3xl p-5 shadow-sm flex flex-col justify-between group">
                 <div>
-                  {/* Clickable Image Thumbnail Box */}
                   <div 
                     onClick={() => product.images.length > 0 && setLightbox({ isOpen: true, product, index: 0 })}
                     className="overflow-hidden rounded-2xl mb-4 bg-neutral-100 aspect-[4/3] relative cursor-zoom-in group-hover:opacity-95 transition"
@@ -92,32 +102,59 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Lightbox Modal (Click to see all files inside product categories) */}
-      {lightbox.isOpen && (
-        <div className="fixed inset-0 bg-neutral-950/90 backdrop-blur-md flex flex-col items-center justify-center z-50 p-4">
-          <button 
-            onClick={() => setLightbox({ isOpen: false, product: null, index: 0 })}
-            className="absolute top-6 right-6 text-white text-4xl font-bold p-2 hover:text-indigo-400 transition"
-          >
-            &times;
-          </button>
-          
-          <div className="max-w-4xl w-full max-h-[70vh] flex items-center justify-center p-4">
-            <img 
-              src={`/images/${lightbox.product.category}/${lightbox.product.images[lightbox.index]}`} 
-              className="max-h-[65vh] max-w-full object-contain rounded-xl shadow-2xl bg-white/5 p-2"
-              alt="Gallery display"
-            />
+      {/* 🚀 BRAND NEW FEATURE: MEET THE FOUNDER SECTION */}
+      <section className="max-w-5xl mx-auto px-6 pb-24">
+        <div className="bg-gradient-to-br from-neutral-900 to-neutral-950 rounded-[2.5rem] p-8 md:p-12 text-white shadow-xl grid md:grid-cols-12 gap-8 items-center">
+          <div className="md:col-span-5 space-y-4">
+            <span className="text-indigo-400 font-mono text-xs uppercase tracking-widest font-bold">Behind The Laser Beam</span>
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">Meet Shaan,<br/>Our 10-Year-Old Chief Creator</h2>
+            <p className="text-neutral-400 text-sm font-medium leading-relaxed">
+              LaserCutAI isn't your typical corporate factory. Shaan started this journey right out of our garage in Box Hill, blending imagination with industrial tech to fund community donations and build custom works of art.
+            </p>
+            <div className="pt-2 flex gap-2">
+              <span className="bg-white/10 text-white text-xs font-bold px-3 py-1.5 rounded-xl">💡 Inventor</span>
+              <span className="bg-white/10 text-white text-xs font-bold px-3 py-1.5 rounded-xl">🛠️ Maker</span>
+              <span className="bg-white/10 text-white text-xs font-bold px-3 py-1.5 rounded-xl">🇦🇺 Box Hill Local</span>
+            </div>
           </div>
 
-          {/* Inline Thumbnail Selectors */}
+          <div className="md:col-span-7 flex flex-col items-center justify-center">
+            <div className="w-full aspect-[4/5] max-w-sm rounded-2xl overflow-hidden bg-neutral-800 border border-neutral-700/50 relative group shadow-2xl">
+              <img 
+                src={`/images/shaan/${SHAAN_GALLERY[shaanIndex].file}`} 
+                alt="Shaan's journey" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
+                <p className="text-white text-xs font-bold font-mono text-center bg-indigo-600/90 py-2 px-3 rounded-xl backdrop-blur-xs">
+                  {SHAAN_GALLERY[shaanIndex].caption}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              {SHAAN_GALLERY.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setShaanIndex(idx)}
+                  className={`h-2 rounded-full transition-all ${shaanIndex === idx ? 'w-8 bg-indigo-500' : 'w-2 bg-neutral-700'}`}
+                  aria-label={`Go to slice ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Lightbox Modal */}
+      {lightbox.isOpen && (
+        <div className="fixed inset-0 bg-neutral-950/90 backdrop-blur-md flex flex-col items-center justify-center z-50 p-4">
+          <button onClick={() => setLightbox({ isOpen: false, product: null, index: 0 })} className="absolute top-6 right-6 text-white text-4xl font-bold p-2 hover:text-indigo-400 transition">&times;</button>
+          <div className="max-w-4xl w-full max-h-[70vh] flex items-center justify-center p-4">
+            <img src={`/images/${lightbox.product.category}/${lightbox.product.images[lightbox.index]}`} className="max-h-[65vh] max-w-full object-contain rounded-xl shadow-2xl bg-white/5 p-2" alt="Display" />
+          </div>
           <div className="flex gap-2 mt-6 overflow-x-auto max-w-full px-4 py-2">
             {lightbox.product.images.map((img, i) => (
-              <button
-                key={i}
-                onClick={() => setLightbox(prev => ({ ...prev, index: i }))}
-                className={`w-16 h-16 rounded-xl overflow-hidden border-2 bg-white flex-shrink-0 transition ${lightbox.index === i ? 'border-indigo-500 scale-105' : 'border-transparent opacity-60'}`}
-              >
+              <button key={i} onClick={() => setLightbox(prev => ({ ...prev, index: i }))} className={`w-16 h-16 rounded-xl overflow-hidden border-2 bg-white flex-shrink-0 transition ${lightbox.index === i ? 'border-indigo-500 scale-105' : 'border-transparent opacity-60'}`}>
                 <img src={`/images/${lightbox.product.category}/${img}`} className="w-full h-full object-cover" />
               </button>
             ))}
@@ -135,7 +172,7 @@ export default function Home() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 max-w-6xl mx-auto">
             {SPONSOR_LOGOS.map((logo, index) => (
               <div key={index} className="bg-white border border-neutral-200 p-3 rounded-2xl shadow-sm aspect-square flex items-center justify-center group hover:scale-105 transition-transform overflow-hidden">
-                <img src={`/images/business/${logo}`} alt="Partnered Brand Work" className="max-h-full max-w-full object-contain" />
+                <img src={`/images/business/${logo}`} alt="Partnered Brand" className="max-h-full max-w-full object-contain" />
               </div>
             ))}
           </div>
@@ -154,7 +191,7 @@ export default function Home() {
                   <p className="text-xs font-bold text-indigo-600 mt-0.5">{selectedProduct.name} — From ${selectedProduct.price}</p>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">How to get it</label>
+                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Fulfillment</label>
                   <select value={deliveryMethod} onChange={(e) => setDeliveryMethod(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-xl text-xs bg-white font-semibold">
                     <option value="Shipping">Express Mail (+$10.00)</option>
                     <option value="Weekend Pickup">Collect at Box Hill Garage (Weekend Free)</option>
