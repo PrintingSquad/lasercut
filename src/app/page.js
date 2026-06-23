@@ -21,6 +21,15 @@ const SHAAN_GALLERY = [
   { file: "7.jpg", caption: "Right at home under the Sydney lights, ready to build" }
 ];
 
+const MATERIALS = [
+  { name: "Mirror Gold", type: "Metallic", class: "bg-gradient-to-tr from-amber-300 via-yellow-100 to-amber-500 border-amber-400 text-amber-950", desc: "High-reflection luxury finish for signs & weddings" },
+  { name: "Mirror Silver", type: "Metallic", class: "bg-gradient-to-tr from-zinc-300 via-neutral-100 to-zinc-400 border-zinc-300 text-zinc-900", desc: "Crisp, modern reflective finish for premium corporate looks" },
+  { name: "Matte Jet Black", type: "Classic Solid", class: "bg-neutral-900 border-neutral-950 text-neutral-100", desc: "Sophisticated, non-reflective deep black acrylic" },
+  { name: "Glossy Arctic White", type: "Classic Solid", class: "bg-white border-neutral-200 text-neutral-900", desc: "Clean high-shine bright white, perfect for multi-layering" },
+  { name: "Galaxy Glitter Blue", type: "Specialty", class: "bg-gradient-to-br from-indigo-600 via-purple-500 to-blue-700 border-indigo-400 text-white animate-pulse", desc: "Embedded dazzling glitter flakes for statement keychains & earrings" },
+  { name: "Rose Gold Glitter", type: "Specialty", class: "bg-gradient-to-br from-pink-400 via-rose-200 to-pink-500 border-pink-300 text-rose-950", desc: "Sparkling elegant finish catching beautiful light reflections" }
+];
+
 export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [lightbox, setLightbox] = useState({ isOpen: false, product: null, index: 0 });
@@ -29,13 +38,14 @@ export default function Home() {
   const [email, setEmail] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [customText, setCustomText] = useState('');
+  const [chosenColor, setChosenColor] = useState('Mirror Gold');
   const [deliveryMethod, setDeliveryMethod] = useState('Shipping');
   const [orderSubmitted, setOrderSubmitted] = useState(false);
 
   const handleCheckout = (e) => {
     e.preventDefault();
     setOrderSubmitted(true);
-    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Price:* $${selectedProduct.price.toFixed(2)}\n\n*Customer:*\n- Name: ${name}\n- Phone: ${whatsapp}\n\n*Specs:* "${customText}"\n- Fulfillment: ${deliveryMethod}`;
+    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Material/Color:* ${chosenColor}\n*Price:* $${selectedProduct.price.toFixed(2)}\n\n*Customer:*\n- Name: ${name}\n- Phone: ${whatsapp}\n\n*Specs:* "${customText}"\n- Fulfillment: ${deliveryMethod}`;
     window.open(`https://wa.me/61412345678?text=${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -61,7 +71,7 @@ export default function Home() {
       </header>
 
       {/* Main Dynamic Product Catalog Grid */}
-      <main className="max-w-7xl mx-auto px-6 pb-20">
+      <main className="max-w-7xl mx-auto px-6 pb-16">
         <div className="grid md:grid-cols-2 gap-8">
           {productsData.map((product) => {
             const featuredImage = product.images.length > 0 
@@ -91,7 +101,7 @@ export default function Home() {
                 </div>
 
                 <button 
-                  onClick={() => { setSelectedProduct(product); setOrderSubmitted(false); }}
+                  onClick={() => { setSelectedProduct(product); setOrderSubmitted(false); setChosenColor('Mirror Gold'); }}
                   className="w-full bg-neutral-900 hover:bg-indigo-600 text-white py-4 rounded-2xl font-bold text-sm tracking-wider transition-all uppercase shadow-md"
                 >
                   Customize This Style
@@ -102,7 +112,36 @@ export default function Home() {
         </div>
       </main>
 
-      {/* 🚀 BRAND NEW FEATURE: MEET THE FOUNDER SECTION */}
+      {/* ✨ MATERIAL COLOR SWATCH CHART SECTION */}
+      <section className="max-w-7xl mx-auto px-6 pb-20">
+        <div className="bg-white border border-neutral-200/80 rounded-[2rem] p-8 shadow-sm space-y-8">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <h2 className="text-3xl font-black tracking-tight text-neutral-900">Premium Material Studio</h2>
+            <p className="text-slate-600 text-sm font-medium">
+              We stock the finest 3mm shatterproof acrylics. Select any finish below to apply to your custom sign, keychain, or custom cutout.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {MATERIALS.map((mat, i) => (
+              <div key={i} className="border border-neutral-200 p-4 rounded-2xl flex items-center gap-4 bg-neutral-50 shadow-2xs">
+                <div className={`w-16 h-16 rounded-xl border flex flex-col items-center justify-center font-black text-[10px] uppercase shadow-inner tracking-tighter text-center px-1 shrink-0 ${mat.class}`}>
+                  {mat.name}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-bold text-neutral-900 text-sm">{mat.name}</h4>
+                    <span className="bg-neutral-200/80 text-neutral-700 font-mono font-bold text-[9px] px-1.5 py-0.5 rounded-md uppercase tracking-wider">{mat.type}</span>
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium mt-0.5">{mat.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* MEET THE FOUNDER SECTION */}
       <section className="max-w-5xl mx-auto px-6 pb-24">
         <div className="bg-gradient-to-br from-neutral-900 to-neutral-950 rounded-[2.5rem] p-8 md:p-12 text-white shadow-xl grid md:grid-cols-12 gap-8 items-center">
           <div className="md:col-span-5 space-y-4">
@@ -179,7 +218,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Checkout Popup Form */}
+      {/* Checkout Popup Form (Now featuring Color Selectors!) */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-neutral-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white max-w-md w-full rounded-3xl p-6 relative shadow-2xl border border-neutral-100">
@@ -190,6 +229,17 @@ export default function Home() {
                   <h3 className="text-xl font-black text-neutral-900">Configure Your Piece</h3>
                   <p className="text-xs font-bold text-indigo-600 mt-0.5">{selectedProduct.name} — From ${selectedProduct.price}</p>
                 </div>
+                
+                {/* 🎨 DYNAMIC STEP: SELECT COLOR INTEGRATED IN ORDER */}
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Select Material Finish</label>
+                  <select value={chosenColor} onChange={(e) => setChosenColor(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-xl text-xs bg-white font-semibold">
+                    {MATERIALS.map((mat, idx) => (
+                      <option key={idx} value={mat.name}>{mat.name} ({mat.type})</option>
+                    ))}
+                  </select>
+                </div>
+
                 <div>
                   <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Fulfillment</label>
                   <select value={deliveryMethod} onChange={(e) => setDeliveryMethod(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-xl text-xs bg-white font-semibold">
