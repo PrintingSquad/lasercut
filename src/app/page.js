@@ -21,18 +21,19 @@ const SHAAN_GALLERY = [
   { file: "7.jpg", caption: "Right at home under the Sydney lights, ready to build" }
 ];
 
+// Rich material data with dynamic visual styling helpers
 const MATERIALS = [
-  { name: "Clear Acrylic (3mm / 4.5mm)" },
-  { name: "Mirror Gold Acrylic" },
-  { name: "Mirror Silver Acrylic" },
-  { name: "Glossy White Acrylic" },
-  { name: "Glossy Black Acrylic" },
-  { name: "Matte White Acrylic" },
-  { name: "Matte Black Acrylic" },
-  { name: "Matte Gold Acrylic" },
-  { name: "Matte Silver Acrylic" },
-  { name: "MDF Wood (Natural Light Brown)" },
-  { name: "MDF Wood (Satin White Finish)" }
+  { name: "Clear Acrylic (3mm / 4.5mm)", bg: "bg-blue-100/40 border-blue-300 backdrop-blur-xs", type: "Glass Clear" },
+  { name: "Mirror Gold Acrylic", bg: "bg-gradient-to-tr from-amber-300 via-yellow-100 to-amber-400 border-amber-400", type: "Reflective Mirror" },
+  { name: "Mirror Silver Acrylic", bg: "bg-gradient-to-tr from-slate-300 via-neutral-100 to-slate-400 border-slate-300", type: "Reflective Mirror" },
+  { name: "Glossy White Acrylic", bg: "bg-white border-neutral-300", type: "High Gloss Solid" },
+  { name: "Glossy Black Acrylic", bg: "bg-neutral-900 border-neutral-950 text-white", type: "High Gloss Solid" },
+  { name: "Matte White Acrylic", bg: "bg-stone-50 border-stone-200", type: "Satin Smooth Matte" },
+  { name: "Matte Black Acrylic", bg: "bg-stone-800 border-stone-900 text-white", type: "Satin Smooth Matte" },
+  { name: "Matte Gold Acrylic", bg: "bg-yellow-600/80 border-yellow-700 text-white", type: "Satin Smooth Matte" },
+  { name: "Matte Silver Acrylic", bg: "bg-zinc-400 border-zinc-500 text-white", type: "Satin Smooth Matte" },
+  { name: "MDF Wood (Natural Light Brown)", bg: "bg-[#d7b58a] border-[#bfa075]", type: "Organic Timber" },
+  { name: "MDF Wood (Satin White Finish)", bg: "bg-neutral-100 border-neutral-200", type: "Satin Smooth Finish" }
 ];
 
 const SIZE_TIERS = [
@@ -65,7 +66,6 @@ export default function Home() {
   const [deliveryMethod, setDeliveryMethod] = useState('Shipping');
   const [orderSubmitted, setOrderSubmitted] = useState(false);
 
-  // 🏠 LOGO CLICK HANDLER TO GO HOME INSTANTLY
   const goHome = () => {
     setActiveCategory('all');
     setSelectedProduct(null);
@@ -183,7 +183,6 @@ export default function Home() {
         ❤️ Every order supports a 10-year-old's business dream & local community donations!
       </div>
 
-      {/* FIXED STICKY NAVIGATION HEADER WITH LIVE NAV ROOT */}
       <nav className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-neutral-100 px-6 py-4 max-w-7xl mx-auto flex justify-between items-center rounded-b-2xl shadow-sm">
         <button 
           onClick={goHome} 
@@ -274,21 +273,23 @@ export default function Home() {
         </div>
       </main>
 
-      {/* MATERIAL STUDIO SECTIONS */}
+      {/* FIXED PREMIUM MATERIAL STUDIO SECTIONS WITH LIVE FINISH BACKGROUNDS */}
       <section className="max-w-7xl mx-auto px-6 pb-20">
         <div className="bg-white border border-neutral-200/80 rounded-[2rem] p-8 shadow-sm space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <h2 className="text-3xl font-black tracking-tight text-neutral-900">Premium Material Studio</h2>
+            <p className="text-xs text-neutral-500 font-medium">Real-world stock finishes used directly inside our laser cutters.</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {MATERIALS.map((mat, i) => (
-              <div key={i} className="border border-neutral-200 p-4 rounded-2xl flex items-center gap-4 bg-neutral-50 shadow-2xs">
-                <div className="w-16 h-16 rounded-xl border flex flex-col items-center justify-center font-black text-[9px] uppercase shadow-inner tracking-tighter text-center px-1 shrink-0 bg-neutral-100 text-neutral-800">
-                  {mat.name.split(" (")[0]}
-                </div>
+              <div key={i} className="border border-neutral-200 p-4 rounded-2xl flex items-center gap-4 bg-neutral-50 shadow-2xs hover:shadow-xs transition-all">
+                {/* Visual Circle Box */}
+                <div className={`w-14 h-14 rounded-xl border-2 shadow-inner shrink-0 ${mat.bg}`} />
                 <div>
-                  <h4 className="font-bold text-neutral-900 text-xs sm:text-sm">{mat.name}</h4>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">Premium quality laser grade sheet finish stock.</p>
+                  <h4 className="font-bold text-neutral-900 text-xs sm:text-sm leading-tight">{mat.name}</h4>
+                  <p className="text-[10px] text-indigo-600 font-bold font-mono tracking-wide mt-1 uppercase bg-indigo-50 inline-block px-2 py-0.5 rounded-md">
+                    {mat.type}
+                  </p>
                 </div>
               </div>
             ))}
@@ -296,7 +297,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 🧑‍LIVELY SHAAN CREATOR BIO CARD WITH SECURE GRAPHICS ROLLBACKS */}
+      {/* SHAAN CREATOR BIO CARD */}
       <section className="max-w-5xl mx-auto px-6 pb-24">
         <div className="bg-gradient-to-br from-neutral-900 to-neutral-950 rounded-[2.5rem] p-8 md:p-12 text-white shadow-xl grid md:grid-cols-12 gap-8 items-center">
           <div className="md:col-span-5 space-y-4">
@@ -313,7 +314,6 @@ export default function Home() {
                 alt="Shaan Customization Grid Studio View" 
                 className="w-full h-full object-cover" 
                 onError={(e) => {
-                  // Fallback if image file is not named precisely 1.jpg inside public/images/shaan/
                   e.target.style.display = 'none';
                   e.target.nextSibling.style.display = 'flex';
                 }}
@@ -334,7 +334,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 🎪 RESPONSIVE INFINITE ROLLING BRAND MARQUEE FOR BUSINESS LOGOS */}
+      {/* ROLLING BRAND MARQUEE FOR BUSINESS LOGOS */}
       <section className="bg-white py-10 border-t border-b border-neutral-200/50 overflow-hidden relative">
         <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#faf9f6] to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#faf9f6] to-transparent z-10 pointer-events-none" />
@@ -347,7 +347,6 @@ export default function Home() {
                   alt="Business Partner Logo Track" 
                   className="max-h-full max-w-full object-contain filter grayscale hover:grayscale-0 transition duration-200" 
                   onError={(e) => {
-                    // Safety failguard block in case file casing is mismatched on server
                     e.target.style.display = 'none';
                     e.target.nextSibling.style.display = 'block';
                   }}
@@ -366,7 +365,6 @@ export default function Home() {
         <div className="fixed inset-0 bg-neutral-950/70 backdrop-blur-md flex justify-end z-50 transition-all duration-300">
           <div className="w-full lg:w-[85vw] xl:w-[75vw] h-full bg-neutral-50 shadow-2xl flex flex-col relative overflow-hidden animate-in slide-in-from-right duration-200">
             
-            {/* HEADER CONTROLS */}
             <div className="sticky top-0 z-50 bg-white border-b border-neutral-200 px-4 py-3 sm:px-6 flex justify-between items-center shadow-xs">
               <div>
                 <h3 className="text-base sm:text-xl font-black text-neutral-900 tracking-tight leading-tight">{selectedProduct.name}</h3>
@@ -379,14 +377,13 @@ export default function Home() {
                 </div>
                 <button 
                   onClick={() => setSelectedProduct(null)} 
-                  className="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 px-4 py-2 rounded-xl text-xs sm:text-sm font-black tracking-wide border border-neutral-200 transition flex items-center gap-1.5 active:scale-95 cursor-pointer"
+                  className="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 px-4 py-2 rounded-xl text-xs sm:text-sm font-black tracking-wide border border-neutral-200 transition flex items-center gap-1.5 active:scale-90 cursor-pointer"
                 >
                   <span>✕</span> Close
                 </button>
               </div>
             </div>
 
-            {/* MAIN CONTENT SPLIT WINDOWS */}
             <div className="flex-1 overflow-y-auto grid lg:grid-cols-12 gap-0">
               
               {/* LEFT VIEWPORT */}
@@ -421,7 +418,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* RIGHT PARAMETER SELECTION VIEWS */}
+              {/* RIGHT PARAMETER SELECTION VIEWS WITH VISUAL COLOR SWATCHES */}
               <div className="lg:col-span-6 p-4 sm:p-6 space-y-6 bg-neutral-50">
                 {!orderSubmitted ? (
                   <form onSubmit={handleCheckout} className="space-y-5">
@@ -488,48 +485,63 @@ export default function Home() {
                       </div>
                     </div>
 
+                    {/* INTERACTIVE COLOR VISUAL SWATCHES GRID CONTAINER */}
                     <div className="space-y-4 bg-white border border-neutral-200 p-4 rounded-2xl shadow-xs">
-                      <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider border-b border-neutral-100 pb-1">Step 3: Select Color Finishes</label>
+                      <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider border-b border-neutral-100 pb-2">Step 3: Click to Select Color Finishes</label>
                       
                       {!isTwoColor ? (
-                        <div>
-                          <label className="block text-xs font-bold text-neutral-700 mb-1">Product Color Texture</label>
-                          <select 
-                            value={singleColor} 
-                            onChange={(e) => setSingleColor(e.target.value)} 
-                            className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs bg-white font-bold text-neutral-800 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
-                          >
+                        <div className="space-y-2">
+                          <label className="block text-xs font-bold text-neutral-500">Selected: <span className="text-indigo-600 font-black">{singleColor}</span></label>
+                          <div className="grid grid-cols-2 gap-2 max-h-[260px] overflow-y-auto pr-1">
                             {MATERIALS.map((mat, idx) => (
-                              <option key={idx} value={mat.name}>{mat.name}</option>
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => setSingleColor(mat.name)}
+                                className={`flex items-center gap-2 p-2 rounded-xl border text-left text-[11px] font-bold transition-all cursor-pointer ${singleColor === mat.name ? 'border-indigo-600 bg-indigo-50/30 ring-1 ring-indigo-100' : 'border-neutral-200 bg-white hover:bg-neutral-50'}`}
+                              >
+                                <span className={`w-6 h-6 rounded-md border shrink-0 ${mat.bg}`} />
+                                <span className="truncate leading-tight">{mat.name.split(" (")[0]}</span>
+                              </button>
                             ))}
-                          </select>
+                          </div>
                         </div>
                       ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-150">
-                          <div>
-                            <label className="block text-xs font-black text-indigo-600 mb-1">Front Accent Color (Top Layer)</label>
-                            <select 
-                              value={frontColor} 
-                              onChange={(e) => setFrontColor(e.target.value)} 
-                              className="w-full px-3 py-2.5 border border-indigo-200 bg-indigo-50/10 rounded-xl text-xs bg-white font-bold text-neutral-800 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
-                            >
+                        <div className="space-y-4 animate-in fade-in duration-150">
+                          {/* Front Layer Swatches */}
+                          <div className="space-y-2">
+                            <label className="block text-xs font-black text-indigo-600">Front Accent Color: <span className="underline">{frontColor.split(" (")[0]}</span></label>
+                            <div className="flex gap-2 overflow-x-auto pb-1.5 scrollbar-thin">
                               {MATERIALS.map((mat, idx) => (
-                                <option key={idx} value={mat.name}>{mat.name}</option>
+                                <button
+                                  key={idx}
+                                  type="button"
+                                  title={mat.name}
+                                  onClick={() => setFrontColor(mat.name)}
+                                  className={`w-10 h-10 rounded-full border-2 shrink-0 relative transition-all cursor-pointer ${frontColor === mat.name ? 'ring-2 ring-indigo-500 scale-105 border-white shadow-md' : 'border-neutral-300 hover:scale-105'} ${mat.bg}`}
+                                >
+                                  {frontColor === mat.name && <span className="absolute inset-0 flex items-center justify-center text-xs font-black drop-shadow-md text-indigo-600">✓</span>}
+                                </button>
                               ))}
-                            </select>
+                            </div>
                           </div>
                           
-                          <div>
-                            <label className="block text-xs font-bold text-neutral-700 mb-1">Background Plate Color (Base Layer)</label>
-                            <select 
-                              value={backColor} 
-                              onChange={(e) => setBackColor(e.target.value)} 
-                              className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs bg-white font-bold text-neutral-800 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
-                            >
+                          {/* Background Layer Swatches */}
+                          <div className="space-y-2">
+                            <label className="block text-xs font-bold text-neutral-700">Background Plate Color: <span className="font-black text-neutral-900">{backColor.split(" (")[0]}</span></label>
+                            <div className="flex gap-2 overflow-x-auto pb-1.5 scrollbar-thin">
                               {MATERIALS.map((mat, idx) => (
-                                <option key={idx} value={mat.name}>{mat.name}</option>
+                                <button
+                                  key={idx}
+                                  type="button"
+                                  title={mat.name}
+                                  onClick={() => setBackColor(mat.name)}
+                                  className={`w-10 h-10 rounded-full border-2 shrink-0 relative transition-all cursor-pointer ${backColor === mat.name ? 'ring-2 ring-neutral-900 scale-105 border-white shadow-md' : 'border-neutral-300 hover:scale-105'} ${mat.bg}`}
+                                >
+                                  {backColor === mat.name && <span className="absolute inset-0 flex items-center justify-center text-xs font-black drop-shadow-md text-emerald-500">✓</span>}
+                                </button>
                               ))}
-                            </select>
+                            </div>
                           </div>
                         </div>
                       )}
