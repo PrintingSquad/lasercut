@@ -1,93 +1,72 @@
 [
   {
-    "id": "prod_lamps",
-    "category": "lamps",
-    "name": "Custom 3D Acrylic Night Lamps",
-    "short_desc": "Beautifully engraved edge-lit acrylic designs. Includes standard LED base or custom matching acrylic base.",
-    "price": 29.00,
-    "images": [
-      "H2dcfa86e331143f7a6c1141a1c9f52d12.jpg",
-      "H2fac60c36d844ebdb7efa7109576a51et.jpg",
-      "H3049ebc6bb1c4c3a919139e59fa9d4ff0.jpg",
-      "H26944f4fc5e647c7a1e1faa9e792ce22e_2.jpg",
-	"lamps_1.jpg",
-"lamps_2.jpg",
-"lamps_3.jpg",
-"lamps_4.jpg",
-"lamps_5.jpg",
-"lamps_6.jpg"
-    ]
+    "id": "prod_keychains",
+    "category": "gift-ideas",
+    "imageFolder": "keychains",
+    "name": "Custom Name Keychains & Bag Tags",
+    "short_desc": "Pocket-sized custom name cutout on premium acrylic with matching hardware loops. Perfect for school bags or keys.",
+    "price": 8.00,
+    "isComboEligible": true,
+    "images": ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg"]
   },
   {
-    "id": "prod_house_signs",
-    "category": "house-signs",
-    "name": "Premium House & Business Signs",
-    "short_desc": "Weatherproof custom outdoor plaques. Perfectly laser-cut lettering to make your home or storefront stand out.",
-    "price": 59.00,
-    "images": [
-      "hs_1.jpg",
-      "hs_2.jpg",
-	"hs_3.jpg",
-	"hs_4.jpg",
-"hs_5.jpg",
-"hs_6.jpg",
-"hs_7.jpg",
-"hs_8.jpg"
-    ]
-  },
- {
-    "id": "prod_script_names",
-    "category": "script-names",
-    "name": "Custom Script Name Cutouts",
-    "short_desc": "Elegant flowing script names for nursery decor, birthdays, backdrops, and custom events. Available in wood or acrylic.",
-    "price": 25.00,
-    "images": [
-      "sn_1.jpg",
-"sn_2.jpg",
-"sn_3.jpg",
-"sn_4.jpg"
-    ]
-  },
-{
-    "id": "prod_keychains",
-    "category": "keychains",
-    "name": "Custom Acrylic Name Keychains",
-    "short_desc": "Dual-layered or deep-engraved personalization. Perfect for school bags, car keys, and custom branding gifts.",
+    "id": "prod_bookmarks",
+    "category": "gift-ideas",
+    "imageFolder": "bookmarks",
+    "name": "Premium Acrylic Bookmarks with Tassels",
+    "short_desc": "Sleek, transparent or mirrored acrylic bookmarks custom-etched with names or quotes. Finished with beautiful silky tassels.",
     "price": 8.00,
-    "images": [
-      "1.jpg",
-      "2.jpg",
-"3.jpg",
-"4.jpg",
-"5.jpg",
-"6.jpg",
-"7.jpg",
-"8.jpg",
-"9.jpg",
-"10.jpg",
-"11.jpg",
-"12.jpg"
-    ]
+    "isComboEligible": true,
+    "images": ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg"]
   },
   {
     "id": "prod_earrings",
-    "category": "earrings",
+    "category": "gift-ideas",
+    "imageFolder": "earrings",
     "name": "Laser-Cut Acrylic Fashion Earrings",
     "short_desc": "Lightweight, vibrant, and incredibly detailed statement earrings. Made with hypoallergenic premium hooks.",
     "price": 8.00,
-    "images": [
-      "1.jpg",
-      "2.jpg",
-"3.jpg",
-"4.jpg",
-"5.jpg",
-"6.jpg",
-"7.jpg",
-"8.jpg",
-"9.jpg",
-"10.jpg",
-"11.jpg",
-"12.jpg"
-    ]
+    "isComboEligible": true,
+    "images": ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg"]
+  },
+  {
+    "id": "prod_lamps",
+    "category": "gift-ideas",
+    "imageFolder": "lamps",
+    "name": "Custom 3D LED Acrylic Night Lamps",
+    "short_desc": "A beautiful warm-glow solid wood USB LED base featuring a custom-etched acrylic plate. Perfect for kids' bedrooms or logos.",
+    "price": 39.00,
+    "isComboEligible": false,
+    "images": ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg"]
+  },
+  {
+    "id": "prod_pets",
+    "category": "pets",
+    "imageFolder": "pets",
+    "name": "Custom Acrylic Pet ID Tags & Plating",
+    "short_desc": "Ultra-durable personalized tags for dogs, cats, or horse stable plaques. Custom engraved with contact phone details.",
+    "price": 8.00,
+    "isComboEligible": true,
+    "images": ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg"]
+  },
+  {
+    "id": "prod_plates",
+    "category": "plates",
+    "imageFolder": "plates",
+    "name": "Premium House Number & Name Plates",
+    "short_desc": "Sleek architectural address signs and room plates. Weatherproof double-layered acrylic or timber wood finishes.",
+    "price": 35.00,
+    "isComboEligible": false,
+    "images": ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg"]
+  },
+  {
+    "id": "prod_signs",
+    "category": "business",
+    "imageFolder": "signs",
+    "name": "Premium Commercial Signs & Branding Boards",
+    "short_desc": "From desktop QR display stands to massive 900x1300mm corporate wall boards. Seamless panel joining available.",
+    "price": 45.00,
+    "isComboEligible": false,
+    "images": ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg"]
   }
 ]

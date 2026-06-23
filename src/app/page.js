@@ -30,41 +30,60 @@ const MATERIALS = [
   { name: "MDF Wood (White / Brown)", type: "Natural Timber", class: "bg-gradient-to-br from-amber-100 via-amber-200 to-amber-700 border-amber-800 text-amber-950", desc: "Eco-friendly natural wood textures and custom finished surfaces" }
 ];
 
+const SIZES = [
+  { name: "Standard Base Size (Included)", extraCost: 0, desc: "Default size listed on the product catalog card." },
+  { name: "Medium Scale Upgrade (+ $25.00)", extraCost: 25, desc: "Up to A4 size/300mm equivalent — ideal for desk signs & small plates." },
+  { name: "Large Event Upgrade (+ $55.00)", extraCost: 55, desc: "Up to A2 size/600mm equivalent — prominent wall address signage." },
+  { name: "Industrial Maximum Single Sheet Upgrade (+ $140.00)", extraCost: 140, desc: "Massive 900mm x 1300mm layout — full machine threshold capacity." },
+  { name: "Infinite Multi-Panel Joined Custom Sign (Quote Required)", extraCost: 0, desc: "Linking multiple 900x1300mm sheets together seamlessly for colossal structural displays." }
+];
+
 export default function Home() {
+  const [activeCategory, setActiveCategory] = useState('all');
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [lightbox, setLightbox] = useState({ isOpen: false, product: null, index: 0 });
   const [shaanIndex, setShaanIndex] = useState(0);
+  
+  const [quantity, setQuantity] = useState(1);
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [customText, setCustomText] = useState('');
   const [chosenColor, setChosenColor] = useState('Clear Acrylic (3mm / 4.5mm)');
+  const [chosenSize, setChosenSize] = useState(SIZES[0]);
   const [deliveryMethod, setDeliveryMethod] = useState('Shipping');
   const [orderSubmitted, setOrderSubmitted] = useState(false);
+
+  const calculateTotal = () => {
+    if (!selectedProduct) return 0;
+    let basePrice = selectedProduct.price;
+    if (selectedProduct.isComboEligible) {
+      if (quantity === 1) basePrice = 8;
+      else if (quantity === 2) basePrice = 15 / 2;
+      else basePrice = (20 + (quantity - 3) * 6.50) / quantity;
+    }
+    return (basePrice + chosenSize.extraCost) * quantity;
+  };
 
   const handleCheckout = (e) => {
     e.preventDefault();
     setOrderSubmitted(true);
-    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Material Choice:* ${chosenColor}\n*Price:* $${selectedProduct.price.toFixed(2)}\n\n*Customer:*\n- Name: ${name}\n- Phone: ${whatsapp}\n\n*Specs:* "${customText}"\n- Fulfillment: ${deliveryMethod}`;
+    const finalTotal = calculateTotal();
+    const isBundleApplied = selectedProduct.isComboEligible && quantity >= 2;
+
+    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Quantity:* ${quantity}x\n*Size Selection:* ${chosenSize.name}\n*Material:* ${chosenColor}\n*Total Computed Price:* $${finalTotal.toFixed(2)}${isBundleApplied ? ' (Bundle Combo Applied!)' : ''}\n\n*Customer Details:*\n- Name: ${name}\n- WhatsApp: ${whatsapp}\n\n*Customization Request:*\n"${customText}"\n\n*Delivery:* ${deliveryMethod}`;
+    
     window.open(`https://wa.me/61412345678?text=${encodeURIComponent(message)}`, '_blank');
   };
 
+  const filteredProducts = activeCategory === 'all' 
+    ? productsData 
+    : productsData.filter(p => p.category === activeCategory);
+
   return (
     <div className="min-h-screen bg-[#faf9f6] text-slate-900 font-sans antialiased overflow-x-hidden">
-      {/* Dynamic Scrolling Animation Logic injected in header style */}
       <style dangerouslySetInnerHTML={{__html: `
-        @keyframes marquee {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          display: flex;
-          width: max-content;
-          animation: marquee 35s linear infinite;
-        }
-        .animate-marquee:hover {
-          animation-play-state: paused;
-        }
+        @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+        .animate-marquee { display: flex; width: max-content; animation: marquee 35s linear infinite; }
+        .animate-marquee:hover { animation-play-state: paused; }
       `}} />
 
       <div className="bg-indigo-600 text-white text-center py-2 px-4 text-xs font-bold uppercase tracking-wider">
@@ -76,51 +95,90 @@ export default function Home() {
         <div className="text-xs font-bold text-neutral-600 font-mono">📍 Box Hill Garage Studio</div>
       </nav>
 
-      <header className="max-w-4xl mx-auto text-center pt-16 pb-12 px-6 space-y-6">
+      <header className="max-w-4xl mx-auto text-center pt-16 pb-6 px-6 space-y-4">
         <div className="inline-block bg-amber-100 text-amber-900 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">
           Driven by Passion • Built in our Garage
         </div>
         <h1 className="text-4xl md:text-6xl font-black tracking-tight text-neutral-900 leading-tight">
-          Started by a passionate 10-year-old.<br />
-          <span className="text-indigo-600">Backed by industrial power.</span>
+          Industrial Scale Execution.<br />
+          <span className="text-indigo-600">Tailored Precision Engineering.</span>
         </h1>
       </header>
 
-      {/* Main Dynamic Product Catalog Grid */}
+      {/* CATEGORY TABS */}
+      <div className="max-w-7xl mx-auto px-6 mb-12 flex justify-center gap-2 flex-wrap">
+        {[
+          { id: 'all', label: '✨ All Collections' },
+          { id: 'gift-ideas', label: '🎁 Gift Ideas, Earrings & Lamps' },
+          { id: 'pets', label: '🐾 Pets & Animals' },
+          { id: 'plates', label: '🚪 Name & Number Plates' },
+          { id: 'business', label: '💼 Custom Branding Signs' }
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveCategory(tab.id)}
+            className={`px-5 py-2.5 rounded-xl text-xs font-bold tracking-wide transition-all border ${activeCategory === tab.id ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' : 'bg-white border-neutral-200 text-neutral-700 hover:bg-neutral-50'}`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Catalog Grid */}
       <main className="max-w-7xl mx-auto px-6 pb-16">
         <div className="grid md:grid-cols-2 gap-8">
-          {productsData.map((product) => {
-            const featuredImage = product.images.length > 0 
-              ? `/images/${product.category}/${product.images[0]}`
-              : `/images/placeholder.jpg`;
+          {filteredProducts.map((product) => {
+            const folderName = product.imageFolder || product.category;
+            const featuredImage = product.images && product.images.length > 0 
+              ? `/images/${folderName}/${product.images[0]}`
+              : null;
 
             return (
-              <div key={product.id} className="bg-white border border-neutral-200/60 rounded-3xl p-5 shadow-sm flex flex-col justify-between group">
+              <div key={product.id} className="bg-white border border-neutral-200/60 rounded-3xl p-5 shadow-sm flex flex-col justify-between group relative">
+                {product.isComboEligible && (
+                  <span className="absolute -top-3 -right-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-black tracking-widest px-3 py-1.5 rounded-xl shadow-md uppercase">
+                    🎉 Mix Combo Offer Available
+                  </span>
+                )}
+                
                 <div>
-                  <div 
-                    onClick={() => product.images.length > 0 && setLightbox({ isOpen: true, product, index: 0 })}
-                    className="overflow-hidden rounded-2xl mb-4 bg-neutral-100 aspect-[4/3] relative cursor-zoom-in group-hover:opacity-95 transition"
-                  >
-                    <img src={featuredImage} alt={product.name} className="w-full h-full object-contain p-2 bg-neutral-50" />
-                    {product.images.length > 1 && (
-                      <span className="absolute bottom-3 right-3 bg-neutral-900/80 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl backdrop-blur-sm shadow-sm">
-                        📸 View Gallery ({product.images.length})
-                      </span>
+                  <div className="overflow-hidden rounded-2xl mb-4 bg-neutral-100 aspect-[4/3] relative group-hover:opacity-95 transition flex items-center justify-center">
+                    {featuredImage ? (
+                      <img src={featuredImage} alt={product.name} className="w-full h-full object-contain p-2 bg-neutral-50" />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-neutral-400 font-mono text-center text-xs px-4">
+                        📸 [ Place image inside: public/images/{folderName}/{product.images?.[0] || 'file.jpg'} ]
+                      </div>
                     )}
                   </div>
                   
-                  <div className="flex justify-between items-baseline mb-2">
-                    <h3 className="text-2xl font-black text-neutral-900 tracking-tight">{product.name}</h3>
-                    <span className="text-indigo-600 font-black text-xl bg-indigo-50 px-3 py-1 rounded-xl">from ${product.price}</span>
+                  <div className="flex justify-between items-baseline mb-2 gap-2">
+                    <h3 className="text-lg md:text-xl font-black text-neutral-900 tracking-tight leading-tight">{product.name}</h3>
+                    <span className="text-indigo-600 font-black text-lg bg-indigo-50 px-3 py-1 rounded-xl shrink-0">
+                      ${product.price}
+                    </span>
                   </div>
-                  <p className="text-slate-600 text-base font-medium leading-relaxed mb-6">{product.short_desc}</p>
+                  <p className="text-slate-600 text-xs sm:text-sm font-medium leading-relaxed mb-4">{product.short_desc}</p>
+                  
+                  {product.isComboEligible && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-6 text-xs text-amber-900 font-bold flex justify-between items-center">
+                      <span>🏷️ Multi-Buy Pricing:</span>
+                      <span className="font-mono">Mix & match: 1 for $8 | 2 for $15 | 3 for $20!</span>
+                    </div>
+                  )}
                 </div>
 
                 <button 
-                  onClick={() => { setSelectedProduct(product); setOrderSubmitted(false); setChosenColor('Clear Acrylic (3mm / 4.5mm)'); }}
+                  onClick={() => { 
+                    setSelectedProduct(product); 
+                    setQuantity(1); 
+                    setOrderSubmitted(false); 
+                    setChosenColor('Clear Acrylic (3mm / 4.5mm)');
+                    setChosenSize(SIZES[0]);
+                  }}
                   className="w-full bg-neutral-900 hover:bg-indigo-600 text-white py-4 rounded-2xl font-bold text-sm tracking-wider transition-all uppercase shadow-md"
                 >
-                  Customize This Style
+                  Configure Size & Finish
                 </button>
               </div>
             );
@@ -128,16 +186,12 @@ export default function Home() {
         </div>
       </main>
 
-      {/* ✨ MATERIAL COLOR SWATCH CHART SECTION */}
+      {/* MATERIAL STUDIO SECTIONS */}
       <section className="max-w-7xl mx-auto px-6 pb-20">
         <div className="bg-white border border-neutral-200/80 rounded-[2rem] p-8 shadow-sm space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <h2 className="text-3xl font-black tracking-tight text-neutral-900">Premium Material Studio</h2>
-            <p className="text-slate-600 text-sm font-medium">
-              We carry a heavy stock of premium industrial mediums ready for instantaneous cutting configuration.
-            </p>
+            <h2 className="text-3xl font-black tracking-tight text-neutral-900">Premium Material & Scale Studio</h2>
           </div>
-
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {MATERIALS.map((mat, i) => (
               <div key={i} className="border border-neutral-200 p-4 rounded-2xl flex items-center gap-4 bg-neutral-50 shadow-2xs">
@@ -145,9 +199,7 @@ export default function Home() {
                   {mat.name.split(" (")[0]}
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-bold text-neutral-900 text-xs sm:text-sm">{mat.name}</h4>
-                  </div>
+                  <h4 className="font-bold text-neutral-900 text-xs sm:text-sm">{mat.name}</h4>
                   <p className="text-xs text-slate-500 font-medium mt-0.5">{mat.desc}</p>
                 </div>
               </div>
@@ -156,7 +208,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* MEET THE FOUNDER SECTION */}
+      {/* MEET THE FOUNDER CARD */}
       <section className="max-w-5xl mx-auto px-6 pb-24">
         <div className="bg-gradient-to-br from-neutral-900 to-neutral-950 rounded-[2.5rem] p-8 md:p-12 text-white shadow-xl grid md:grid-cols-12 gap-8 items-center">
           <div className="md:col-span-5 space-y-4">
@@ -165,71 +217,31 @@ export default function Home() {
             <p className="text-neutral-400 text-sm font-medium leading-relaxed">
               LaserCutAI isn't your typical corporate factory. Shaan started this journey right out of our garage in Box Hill, blending imagination with industrial tech to fund community donations and build custom works of art.
             </p>
-            <div className="pt-2 flex gap-2">
-              <span className="bg-white/10 text-white text-xs font-bold px-3 py-1.5 rounded-xl">💡 Inventor</span>
-              <span className="bg-white/10 text-white text-xs font-bold px-3 py-1.5 rounded-xl">🛠️ Maker</span>
-              <span className="bg-white/10 text-white text-xs font-bold px-3 py-1.5 rounded-xl">🇦🇺 Box Hill Local</span>
-            </div>
           </div>
-
           <div className="md:col-span-7 flex flex-col items-center justify-center">
             <div className="w-full aspect-[4/5] max-w-sm rounded-2xl overflow-hidden bg-neutral-800 border border-neutral-700/50 relative group shadow-2xl">
-              <img 
-                src={`/images/shaan/${SHAAN_GALLERY[shaanIndex].file}`} 
-                alt="Shaan's journey" 
-                className="w-full h-full object-cover"
-              />
+              <img src={`/images/shaan/${SHAAN_GALLERY[shaanIndex].file}`} alt="Shaan" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
-                <p className="text-white text-xs font-bold font-mono text-center bg-indigo-600/90 py-2 px-3 rounded-xl backdrop-blur-xs">
-                  {SHAAN_GALLERY[shaanIndex].caption}
-                </p>
+                <p className="text-white text-xs font-bold font-mono text-center bg-indigo-600/90 py-2 px-3 rounded-xl">{SHAAN_GALLERY[shaanIndex].caption}</p>
               </div>
             </div>
             <div className="flex gap-2 mt-4">
               {SHAAN_GALLERY.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setShaanIndex(idx)}
-                  className={`h-2 rounded-full transition-all ${shaanIndex === idx ? 'w-8 bg-indigo-500' : 'w-2 bg-neutral-700'}`}
-                  aria-label={`Go to slice ${idx + 1}`}
-                />
+                <button key={idx} onClick={() => setShaanIndex(idx)} className={`h-2 rounded-full transition-all ${shaanIndex === idx ? 'w-8 bg-indigo-500' : 'w-2 bg-neutral-700'}`} />
               ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Lightbox Modal */}
-      {lightbox.isOpen && (
-        <div className="fixed inset-0 bg-neutral-950/90 backdrop-blur-md flex flex-col items-center justify-center z-50 p-4">
-          <button onClick={() => setLightbox({ isOpen: false, product: null, index: 0 })} className="absolute top-6 right-6 text-white text-4xl font-bold p-2 hover:text-indigo-400 transition">&times;</button>
-          <div className="max-w-4xl w-full max-h-[70vh] flex items-center justify-center p-4">
-            <img src={`/images/${lightbox.product.category}/${lightbox.product.images[lightbox.index]}`} className="max-h-[65vh] max-w-full object-contain rounded-xl shadow-2xl bg-white/5 p-2" alt="Display" />
-          </div>
-          <div className="flex gap-2 mt-6 overflow-x-auto max-w-full px-4 py-2">
-            {lightbox.product.images.map((img, i) => (
-              <button key={i} onClick={() => setLightbox(prev => ({ ...prev, index: i }))} className={`w-16 h-16 rounded-xl overflow-hidden border-2 bg-white flex-shrink-0 transition ${lightbox.index === i ? 'border-indigo-500 scale-105' : 'border-transparent opacity-60'}`}>
-                <img src={`/images/${lightbox.product.category}/${img}`} className="w-full h-full object-cover" />
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* 🚀 UPGRADED SECTION: INFINITE ROLLING BRAND MARQUEE */}
+      {/* INFINITE ROLLING BRAND MARQUEE */}
       <section className="bg-white py-10 border-t border-b border-neutral-200/50 overflow-hidden relative">
         <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#faf9f6] to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#faf9f6] to-transparent z-10 pointer-events-none" />
-        
-        <div className="max-w-7xl mx-auto px-6 mb-4 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest text-neutral-400 font-mono">Trusted By Trusted Local Brands & Organizations</p>
-        </div>
-
         <div className="relative w-full overflow-hidden flex">
-          {/* First loop and second mirrored loop combined inside the scrolling frame */}
           <div className="animate-marquee gap-6 flex items-center">
             {SPONSOR_LOGOS.concat(SPONSOR_LOGOS).map((logo, idx) => (
-              <div key={idx} className="h-16 w-32 bg-neutral-50 border border-neutral-150 p-2.5 rounded-xl flex items-center justify-center shrink-0 shadow-2xs hover:border-indigo-400 transition duration-300">
+              <div key={idx} className="h-16 w-32 bg-neutral-50 border border-neutral-150 p-2.5 rounded-xl flex items-center justify-center shrink-0">
                 <img src={`/images/business/${logo}`} alt="Brand Logo" className="max-h-full max-w-full object-contain filter grayscale hover:grayscale-0 transition" />
               </div>
             ))}
@@ -237,18 +249,46 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Checkout Popup Form */}
+      {/* Modal Popup Customizer */}
       {selectedProduct && (
-        <div className="fixed inset-0 bg-neutral-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white max-w-md w-full rounded-3xl p-6 relative shadow-2xl border border-neutral-100">
+        <div className="fixed inset-0 bg-neutral-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white max-w-md w-full rounded-3xl p-6 relative shadow-2xl border border-neutral-100 my-8">
             <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-900 text-2xl font-bold p-2">&times;</button>
+            
             {!orderSubmitted ? (
               <form onSubmit={handleCheckout} className="space-y-4">
                 <div>
-                  <h3 className="text-xl font-black text-neutral-900">Configure Your Piece</h3>
-                  <p className="text-xs font-bold text-indigo-600 mt-0.5">{selectedProduct.name} — From ${selectedProduct.price}</p>
+                  <h3 className="text-xl font-black text-neutral-900">Configure Custom Order</h3>
+                  <p className="text-xs font-bold text-indigo-600 mt-0.5">{selectedProduct.name}</p>
                 </div>
                 
+                <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3 flex items-center justify-between">
+                  <div>
+                    <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider">How many items?</label>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-8 h-8 bg-white border border-neutral-300 rounded-lg font-black text-sm flex items-center justify-center shadow-xs">-</button>
+                    <span className="font-mono font-black text-base text-neutral-900">{quantity}</span>
+                    <button type="button" onClick={() => setQuantity(q => q + 1)} className="w-8 h-8 bg-white border border-neutral-300 rounded-lg font-black text-sm flex items-center justify-center shadow-xs">+</button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Select Dimension Scale</label>
+                  <select 
+                    value={chosenSize.name} 
+                    onChange={(e) => {
+                      const match = SIZES.find(s => s.name === e.target.value);
+                      if(match) setChosenSize(match);
+                    }} 
+                    className="w-full px-3 py-2 border border-neutral-200 rounded-xl text-xs bg-white font-semibold"
+                  >
+                    {SIZES.map((size, idx) => (
+                      <option key={idx} value={size.name}>{size.name}</option>
+                    ))}
+                  </select>
+                </div>
+
                 <div>
                   <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Select Material Finish</label>
                   <select value={chosenColor} onChange={(e) => setChosenColor(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-xl text-xs bg-white font-semibold">
@@ -259,30 +299,28 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Fulfillment</label>
-                  <select value={deliveryMethod} onChange={(e) => setDeliveryMethod(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-xl text-xs bg-white font-semibold">
-                    <option value="Shipping">Express Mail (+$10.00)</option>
-                    <option value="Weekend Pickup">Collect at Box Hill Garage (Weekend Free)</option>
-                  </select>
+                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Design Specs / Text Copy</label>
+                  <textarea rows="2" placeholder="Describe layout details or name engravings here." required value={customText} onChange={(e) => setCustomText(e.target.value)} className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs font-medium" />
                 </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Design Specs / Custom Text</label>
-                  <textarea rows="2" placeholder="Describe what you want cut or written here." required value={customText} onChange={(e) => setCustomText(e.target.value)} className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs font-medium" />
-                </div>
+
                 <div className="bg-neutral-50 rounded-xl p-3 space-y-2 border border-neutral-100">
                   <input type="text" placeholder="Your Name" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-xs" />
-                  <input type="email" placeholder="Email Address" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-xs" />
-                  <input type="tel" placeholder="WhatsApp Mobile Number" required value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-xs" />
+                  <input type="tel" placeholder="WhatsApp Number" required value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-xs" />
                 </div>
+
+                <div className="border-t border-neutral-100 pt-3 flex justify-between items-center">
+                  <span className="text-xs text-neutral-500 font-bold block">Total Amount:</span>
+                  <span className="text-2xl font-black text-indigo-600 font-mono">${calculateTotal().toFixed(2)}</span>
+                </div>
+
                 <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3.5 rounded-xl font-bold text-xs tracking-widest uppercase shadow-md">
-                  Send Specs & Open WhatsApp Pay
+                  Send Specs to WhatsApp
                 </button>
               </form>
             ) : (
               <div className="text-center py-8 space-y-4">
                 <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto font-black text-3xl">✓</div>
-                <h3 className="text-2xl font-black text-neutral-900">Specs Received!</h3>
-                <p className="text-xs text-neutral-500 max-w-xs mx-auto">Opening WhatsApp securely to finish payment confirmation...</p>
+                <h3 className="text-2xl font-black text-neutral-900">Specs Forwarded!</h3>
               </div>
             )}
           </div>
