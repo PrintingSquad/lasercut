@@ -1,0 +1,26 @@
+[
+  {
+    "id": "prod_lamps",
+    "category": "lamps",
+    "name": "Custom 3D Acrylic Night Lamps",
+    "short_desc": "Beautifully engraved edge-lit acrylic designs. Includes standard LED base or custom matching acrylic base.",
+    "price": 49.00,
+    "images": [
+      "H2dcfa86e331143f7a6c1141a1c9f52d12.jpg",
+      "H2fac60c36d844ebdb7efa7109576a51et.jpg",
+      "H3049ebc6bb1c4c3a919139e59fa9d4ff0.jpg",
+      "H26944f4fc5e647c7a1e1faa9e792ce22e_2.jpg"
+    ]
+  },
+  {
+    "id": "prod_house",
+    "category": "house-signs",
+    "name": "Modern House Number Signs",
+    "short_desc": "Big, clean street numbers cut from premium acrylic layered on timber or floating mount standoffs.",
+    "price": 79.00,
+    "images": [
+      "sign1.jpg",
+      "sign2.jpg"
+    ]
+  }
+]
