@@ -2,9 +2,18 @@
 import React, { useState } from 'react';
 import productsData from './products.json';
 
-// 💡 DRAG AND DROP YOUR BUSINESS SPONSOR LOGO IMAGES HERE:
+// Verbatim list of all the business and brand files you have in your public/images/business/ folder
 const SPONSOR_LOGOS = [
-  "Untitled-4.jpg" // Add any other logo files you dropped into public/images/business/ here!
+  "Untitled-4.jpg",
+  "Sydney.jpg",
+  "Travelcrafters-Logo-NEW.jpg",
+  "vector-decorative-kangaroo-patterned-design-44625880.jpeg",
+  "WhatsApp Image 2024-08-01 at 1.56.33 PM.jpeg",
+  "AET logo.png",
+  "Boss Automotive.jpg",
+  "Dealwala Logo.jpg",
+  "Desi Kothi Sydney.jpg",
+  "Dishas Kitchen.jpg"
 ];
 
 export default function Home() {
@@ -53,7 +62,7 @@ export default function Home() {
         </h1>
       </header>
 
-      {/* Main Dynamic Product Catalog Grid */}
+      {/* Dynamic Product Catalog Grid */}
       <main className="max-w-7xl mx-auto px-6 pb-20">
         <div className="grid md:grid-cols-2 gap-8">
           {productsData.map((product) => {
@@ -101,21 +110,21 @@ export default function Home() {
         </div>
       </main>
 
-      {/* NEW SECTION: Corporate Partners / Sponsor Trophy Row */}
+      {/* Brand Partners Showcase Grid */}
       <section className="bg-neutral-100 py-16 px-6 border-t border-neutral-200/60">
         <div className="max-w-7xl mx-auto text-center space-y-8">
           <div>
             <h2 className="text-3xl font-black tracking-tight text-neutral-900">Trusted By Brands & Organizations</h2>
-            <p className="text-slate-600 font-medium text-sm mt-2">Premium custom corporate logo plaques and awards built directly in our Box Hill studio.</p>
+            <p className="text-slate-600 font-medium text-sm mt-2">Premium custom signs, corporate plaques, and displays built directly in our Box Hill studio.</p>
           </div>
           
-          <div className="flex flex-wrap justify-center items-center gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 max-w-6xl mx-auto">
             {SPONSOR_LOGOS.map((logo, index) => (
-              <div key={index} className="bg-white border border-neutral-200 p-4 rounded-2xl shadow-sm max-w-[200px] aspect-square flex items-center justify-center group hover:scale-105 transition-transform">
+              <div key={index} className="bg-white border border-neutral-200 p-3 rounded-2xl shadow-sm aspect-square flex items-center justify-center group hover:scale-105 transition-transform overflow-hidden">
                 <img 
                   src={`/images/business/${logo}`} 
                   alt="Partnered Brand Work" 
-                  className="max-h-full max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all"
+                  className="max-h-full max-w-full object-contain"
                 />
               </div>
             ))}
