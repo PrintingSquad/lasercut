@@ -41,6 +41,7 @@ const SIZES = [
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0); // 🖼️ Dynamic Slider Index
   const [shaanIndex, setShaanIndex] = useState(0);
   
   const [quantity, setQuantity] = useState(1);
@@ -68,10 +69,21 @@ export default function Home() {
     setOrderSubmitted(true);
     const finalTotal = calculateTotal();
     const isBundleApplied = selectedProduct.isComboEligible && quantity >= 2;
+    const variantViewed = selectedProduct.images[currentImageIndex];
 
-    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Quantity:* ${quantity}x\n*Size Selection:* ${chosenSize.name}\n*Material:* ${chosenColor}\n*Total Computed Price:* $${finalTotal.toFixed(2)}${isBundleApplied ? ' (Bundle Combo Applied!)' : ''}\n\n*Customer Details:*\n- Name: ${name}\n- WhatsApp: ${whatsapp}\n\n*Customization Request:*\n"${customText}"\n\n*Delivery:* ${deliveryMethod}`;
+    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Reference Image Finish:* Folder: [${selectedProduct.imageFolder}] / File: [${variantViewed}]\n*Quantity:* ${quantity}x\n*Size Selection:* ${chosenSize.name}\n*Material:* ${chosenColor}\n*Total Computed Price:* $${finalTotal.toFixed(2)}${isBundleApplied ? ' (Bundle Combo Applied!)' : ''}\n\n*Customer Details:*\n- Name: ${name}\n- WhatsApp: ${whatsapp}\n\n*Customization Request:*\n"${customText}"\n\n*Delivery:* ${deliveryMethod}`;
     
     window.open(`https://wa.me/61412345678?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
+  const nextImage = () => {
+    if (!selectedProduct) return;
+    setCurrentImageIndex((prev) => (prev + 1) % selectedProduct.images.length);
+  };
+
+  const prevImage = () => {
+    if (!selectedProduct) return;
+    setCurrentImageIndex((prev) => (prev - 1 + selectedProduct.images.length) % selectedProduct.images.length);
   };
 
   const filteredProducts = activeCategory === 'all' 
@@ -129,9 +141,8 @@ export default function Home() {
         <div className="grid md:grid-cols-2 gap-8">
           {filteredProducts.map((product) => {
             const folderName = product.imageFolder || product.category;
-            const featuredImage = product.images && product.images.length > 0 
-              ? `/images/${folderName}/${product.images[0]}`
-              : null;
+            // Display 1.jpg as the cover thumbnail on the main grid
+            const featuredImage = `/images/${folderName}/1.jpg`;
 
             return (
               <div key={product.id} className="bg-white border border-neutral-200/60 rounded-3xl p-5 shadow-sm flex flex-col justify-between group relative">
@@ -143,13 +154,18 @@ export default function Home() {
                 
                 <div>
                   <div className="overflow-hidden rounded-2xl mb-4 bg-neutral-100 aspect-[4/3] relative group-hover:opacity-95 transition flex items-center justify-center">
-                    {featuredImage ? (
-                      <img src={featuredImage} alt={product.name} className="w-full h-full object-contain p-2 bg-neutral-50" />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-neutral-400 font-mono text-center text-xs px-4">
-                        📸 [ Place image inside: public/images/{folderName}/{product.images?.[0] || 'file.jpg'} ]
-                      </div>
-                    )}
+                    <img 
+                      src={featuredImage} 
+                      alt={product.name} 
+                      className="w-full h-full object-contain p-2 bg-neutral-50"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                    <div className="absolute inset-0 hidden flex-col items-center justify-center text-neutral-400 font-mono text-center text-xs px-4">
+                      📸 [ Folder: public/images/{folderName}/ (Needs 1.jpg) ]
+                    </div>
                   </div>
                   
                   <div className="flex justify-between items-baseline mb-2 gap-2">
@@ -173,12 +189,13 @@ export default function Home() {
                     setSelectedProduct(product); 
                     setQuantity(1); 
                     setOrderSubmitted(false); 
+                    setCurrentImageIndex(0); // Reset gallery index
                     setChosenColor('Clear Acrylic (3mm / 4.5mm)');
                     setChosenSize(SIZES[0]);
                   }}
                   className="w-full bg-neutral-900 hover:bg-indigo-600 text-white py-4 rounded-2xl font-bold text-sm tracking-wider transition-all uppercase shadow-md"
                 >
-                  Configure Size & Finish
+                  View Gallery & Configure
                 </button>
               </div>
             );
@@ -249,22 +266,46 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Modal Popup Customizer */}
+      {/* Modal Popup Slider & Configurator */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-neutral-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
           <div className="bg-white max-w-md w-full rounded-3xl p-6 relative shadow-2xl border border-neutral-100 my-8">
-            <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-900 text-2xl font-bold p-2">&times;</button>
+            <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-900 text-2xl font-bold p-2 z-10">&times;</button>
             
             {!orderSubmitted ? (
               <form onSubmit={handleCheckout} className="space-y-4">
                 <div>
-                  <h3 className="text-xl font-black text-neutral-900">Configure Custom Order</h3>
-                  <p className="text-xs font-bold text-indigo-600 mt-0.5">{selectedProduct.name}</p>
+                  <h3 className="text-xl font-black text-neutral-900">{selectedProduct.name}</h3>
+                  <p className="text-xs text-neutral-500 mt-1">{selectedProduct.short_desc}</p>
+                </div>
+
+                {/* 🗺️ INTERACTIVE 12-IMAGE GALLERY SLIDER INTERFACE */}
+                <div className="relative overflow-hidden rounded-2xl bg-neutral-150 aspect-[4/3] flex items-center justify-center border border-neutral-200">
+                  <img 
+                    src={`/images/${selectedProduct.imageFolder}/${selectedProduct.images[currentImageIndex]}`} 
+                    alt={`Variant Layout ${currentImageIndex + 1}`}
+                    className="w-full h-full object-contain p-2"
+                  />
+                  
+                  {/* Left Swipe Button */}
+                  <button type="button" onClick={prevImage} className="absolute left-2 bg-black/60 hover:bg-indigo-600 text-white w-8 h-8 rounded-full font-black text-xs shadow transition-all">
+                    ←
+                  </button>
+                  
+                  {/* Right Swipe Button */}
+                  <button type="button" onClick={nextImage} className="absolute right-2 bg-black/60 hover:bg-indigo-600 text-white w-8 h-8 rounded-full font-black text-xs shadow transition-all">
+                    →
+                  </button>
+
+                  {/* Image Counter Badge */}
+                  <div className="absolute bottom-2 right-2 bg-black/70 text-white font-mono font-bold text-[10px] px-2.5 py-1 rounded-md tracking-wider">
+                    Variant Design: {currentImageIndex + 1} / 12
+                  </div>
                 </div>
                 
                 <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3 flex items-center justify-between">
                   <div>
-                    <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider">How many items?</label>
+                    <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider">Order Quantity</label>
                   </div>
                   <div className="flex items-center gap-3">
                     <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-8 h-8 bg-white border border-neutral-300 rounded-lg font-black text-sm flex items-center justify-center shadow-xs">-</button>
@@ -299,8 +340,8 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Design Specs / Text Copy</label>
-                  <textarea rows="2" placeholder="Describe layout details or name engravings here." required value={customText} onChange={(e) => setCustomText(e.target.value)} className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs font-medium" />
+                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Customization Instructions</label>
+                  <textarea rows="2" placeholder="Include your exact custom text or describe which image number look you want built." required value={customText} onChange={(e) => setCustomText(e.target.value)} className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs font-medium" />
                 </div>
 
                 <div className="bg-neutral-50 rounded-xl p-3 space-y-2 border border-neutral-100">
