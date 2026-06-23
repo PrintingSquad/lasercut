@@ -106,7 +106,7 @@ export default function Home() {
     return basePrice * quantity;
   };
 
-  const handleCheckout = (e) => {
+ const handleCheckout = (e) => {
     e.preventDefault();
     setOrderSubmitted(true);
     const unitPrice = calculateFinalUnitPrice();
@@ -118,11 +118,15 @@ export default function Home() {
       ? `FRONT Layer: ${frontColor} | BACK Layer: ${backColor}`
       : `Single Solid Color: ${singleColor}`;
 
+    // Get the current website domain dynamically to construct a live image preview URL
+    const siteUrl = window.location.origin;
+    const imagePreviewUrl = `${siteUrl}/images/${selectedProduct.imageFolder}/${variantViewed}`;
+
     const lines = [
       `[NEW ORDER FOR LASERCUTAI]`,
       ``,
       `*Product:* ${selectedProduct.name}`,
-      `*Layout Image Ref:* Folder: [${selectedProduct.imageFolder}] / File: [${variantViewed}]`,
+      `*Design Image Preview:* ${imagePreviewUrl}`, // <-- THIS GENERATES THE VISUAL SNIPPET IN WHATSAPP
       `*Quantity:* ${quantity}x`,
       ``,
       `*DESIGN SPECS:*`,
@@ -143,7 +147,6 @@ export default function Home() {
     ];
 
     const finalEscapedString = encodeURIComponent(lines.join('\n'));
-    // UPDATED WHATSAPP MOBILE NUMBER: 61473508558
     window.open(`https://wa.me/61473508558?text=${finalEscapedString}`, '_blank');
   };
 
