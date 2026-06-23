@@ -65,6 +65,14 @@ export default function Home() {
   const [deliveryMethod, setDeliveryMethod] = useState('Shipping');
   const [orderSubmitted, setOrderSubmitted] = useState(false);
 
+  // 🏠 LOGO CLICK HANDLER TO GO HOME INSTANTLY
+  const goHome = () => {
+    setActiveCategory('all');
+    setSelectedProduct(null);
+    setOrderSubmitted(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const calculateSingleUnitOriginalPrice = () => {
     if (!selectedProduct) return 0;
     if (selectedSizeId === 'industrial') return selectedProduct.price;
@@ -106,7 +114,7 @@ export default function Home() {
     return basePrice * quantity;
   };
 
- const handleCheckout = (e) => {
+  const handleCheckout = (e) => {
     e.preventDefault();
     setOrderSubmitted(true);
     const unitPrice = calculateFinalUnitPrice();
@@ -118,7 +126,6 @@ export default function Home() {
       ? `FRONT Layer: ${frontColor} | BACK Layer: ${backColor}`
       : `Single Solid Color: ${singleColor}`;
 
-    // Get the current website domain dynamically to construct a live image preview URL
     const siteUrl = window.location.origin;
     const imagePreviewUrl = `${siteUrl}/images/${selectedProduct.imageFolder}/${variantViewed}`;
 
@@ -126,7 +133,7 @@ export default function Home() {
       `[NEW ORDER FOR LASERCUTAI]`,
       ``,
       `*Product:* ${selectedProduct.name}`,
-      `*Design Image Preview:* ${imagePreviewUrl}`, // <-- THIS GENERATES THE VISUAL SNIPPET IN WHATSAPP
+      `*Design Image Preview:* ${imagePreviewUrl}`,
       `*Quantity:* ${quantity}x`,
       ``,
       `*DESIGN SPECS:*`,
@@ -176,8 +183,14 @@ export default function Home() {
         ❤️ Every order supports a 10-year-old's business dream & local community donations!
       </div>
 
+      {/* FIXED STICKY NAVIGATION HEADER WITH LIVE NAV ROOT */}
       <nav className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-neutral-100 px-6 py-4 max-w-7xl mx-auto flex justify-between items-center rounded-b-2xl shadow-sm">
-        <span className="text-2xl font-black tracking-tighter text-neutral-900">LASERCUT<span className="text-indigo-600">AI</span></span>
+        <button 
+          onClick={goHome} 
+          className="text-2xl font-black tracking-tighter text-neutral-900 hover:opacity-80 active:scale-95 transition-all outline-hidden cursor-pointer"
+        >
+          LASERCUT<span className="text-indigo-600">AI</span>
+        </button>
         <div className="text-xs font-bold text-neutral-600 font-mono">📍 Box Hill Garage Studio</div>
       </nav>
 
@@ -261,12 +274,99 @@ export default function Home() {
         </div>
       </main>
 
-      {/* AMAZON-STYLE FULL SCREEN SPLIT STUDIO OVERLAY */}
+      {/* MATERIAL STUDIO SECTIONS */}
+      <section className="max-w-7xl mx-auto px-6 pb-20">
+        <div className="bg-white border border-neutral-200/80 rounded-[2rem] p-8 shadow-sm space-y-8">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <h2 className="text-3xl font-black tracking-tight text-neutral-900">Premium Material Studio</h2>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {MATERIALS.map((mat, i) => (
+              <div key={i} className="border border-neutral-200 p-4 rounded-2xl flex items-center gap-4 bg-neutral-50 shadow-2xs">
+                <div className="w-16 h-16 rounded-xl border flex flex-col items-center justify-center font-black text-[9px] uppercase shadow-inner tracking-tighter text-center px-1 shrink-0 bg-neutral-100 text-neutral-800">
+                  {mat.name.split(" (")[0]}
+                </div>
+                <div>
+                  <h4 className="font-bold text-neutral-900 text-xs sm:text-sm">{mat.name}</h4>
+                  <p className="text-xs text-slate-500 font-medium mt-0.5">Premium quality laser grade sheet finish stock.</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 🧑‍LIVELY SHAAN CREATOR BIO CARD WITH SECURE GRAPHICS ROLLBACKS */}
+      <section className="max-w-5xl mx-auto px-6 pb-24">
+        <div className="bg-gradient-to-br from-neutral-900 to-neutral-950 rounded-[2.5rem] p-8 md:p-12 text-white shadow-xl grid md:grid-cols-12 gap-8 items-center">
+          <div className="md:col-span-5 space-y-4">
+            <span className="text-indigo-400 font-mono text-xs uppercase tracking-widest font-bold">Behind The Laser Beam</span>
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">Meet Shaan,<br/>Our 10-Year-Old Chief Creator</h2>
+            <p className="text-neutral-400 text-sm font-medium leading-relaxed">
+              LaserCutAI isn't your typical corporate factory. Shaan started this journey right out of our garage in Box Hill, blending imagination with industrial tech to fund community donations and build custom works of art.
+            </p>
+          </div>
+          <div className="md:col-span-7 flex flex-col items-center justify-center">
+            <div className="w-full aspect-[4/5] max-w-sm rounded-2xl overflow-hidden bg-neutral-800 border border-neutral-700/50 relative group shadow-2xl flex items-center justify-center">
+              <img 
+                src={`/images/shaan/${SHAAN_GALLERY[shaanIndex].file}`} 
+                alt="Shaan Customization Grid Studio View" 
+                className="w-full h-full object-cover" 
+                onError={(e) => {
+                  // Fallback if image file is not named precisely 1.jpg inside public/images/shaan/
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+              <div className="absolute inset-0 hidden flex-col items-center justify-center p-4 bg-neutral-800 text-center font-mono text-neutral-400 text-xs">
+                📸 Place Shaan photo here:<br/>public/images/shaan/{SHAAN_GALLERY[shaanIndex].file}
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
+                <p className="text-white text-xs font-bold font-mono text-center bg-indigo-600/90 py-2 px-3 rounded-xl">{SHAAN_GALLERY[shaanIndex].caption}</p>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              {SHAAN_GALLERY.map((_, idx) => (
+                <button key={idx} onClick={() => setShaanIndex(idx)} className={`h-2 rounded-full transition-all cursor-pointer ${shaanIndex === idx ? 'w-8 bg-indigo-500' : 'w-2 bg-neutral-700'}`} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 🎪 RESPONSIVE INFINITE ROLLING BRAND MARQUEE FOR BUSINESS LOGOS */}
+      <section className="bg-white py-10 border-t border-b border-neutral-200/50 overflow-hidden relative">
+        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#faf9f6] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#faf9f6] to-transparent z-10 pointer-events-none" />
+        <div className="relative w-full overflow-hidden flex">
+          <div className="animate-marquee gap-6 flex items-center">
+            {SPONSOR_LOGOS.concat(SPONSOR_LOGOS).map((logo, idx) => (
+              <div key={idx} className="h-16 w-32 bg-neutral-50 border border-neutral-150 p-2.5 rounded-xl flex items-center justify-center shrink-0 overflow-hidden">
+                <img 
+                  src={`/images/business/${logo}`} 
+                  alt="Business Partner Logo Track" 
+                  className="max-h-full max-w-full object-contain filter grayscale hover:grayscale-0 transition duration-200" 
+                  onError={(e) => {
+                    // Safety failguard block in case file casing is mismatched on server
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'block';
+                  }}
+                />
+                <div className="hidden text-[8px] text-neutral-400 font-mono font-bold truncate text-center max-w-full px-1">
+                  {logo}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* RETAIL SPLIT ENGINE CONFIGURATOR */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-neutral-950/70 backdrop-blur-md flex justify-end z-50 transition-all duration-300">
           <div className="w-full lg:w-[85vw] xl:w-[75vw] h-full bg-neutral-50 shadow-2xl flex flex-col relative overflow-hidden animate-in slide-in-from-right duration-200">
             
-            {/* STICKY RETAIL HEADER WITH CLEAR CLOSE ACTION */}
+            {/* HEADER CONTROLS */}
             <div className="sticky top-0 z-50 bg-white border-b border-neutral-200 px-4 py-3 sm:px-6 flex justify-between items-center shadow-xs">
               <div>
                 <h3 className="text-base sm:text-xl font-black text-neutral-900 tracking-tight leading-tight">{selectedProduct.name}</h3>
@@ -279,36 +379,31 @@ export default function Home() {
                 </div>
                 <button 
                   onClick={() => setSelectedProduct(null)} 
-                  className="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 px-4 py-2 rounded-xl text-xs sm:text-sm font-black tracking-wide border border-neutral-200 transition flex items-center gap-1.5 active:scale-95"
+                  className="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 px-4 py-2 rounded-xl text-xs sm:text-sm font-black tracking-wide border border-neutral-200 transition flex items-center gap-1.5 active:scale-95 cursor-pointer"
                 >
                   <span>✕</span> Close
                 </button>
               </div>
             </div>
 
-            {/* SPLIT RETAIL BOARD AREA */}
+            {/* MAIN CONTENT SPLIT WINDOWS */}
             <div className="flex-1 overflow-y-auto grid lg:grid-cols-12 gap-0">
               
-              {/* LEFT COLUMN: THE AMAZON-STYLE HERO GALLERY DISPLAY */}
+              {/* LEFT VIEWPORT */}
               <div className="lg:col-span-6 bg-white border-b lg:border-b-0 lg:border-r border-neutral-200 p-4 sm:p-6 flex flex-col justify-start lg:sticky lg:top-[65px] lg:h-[calc(100vh-65px)] overflow-y-auto">
-                
-                {/* LARGE SCREEN LIGHTBOX CANVAS */}
                 <div className="relative overflow-hidden rounded-2xl bg-neutral-50 aspect-[4/3] flex items-center justify-center border border-neutral-100 shadow-inner group">
                   <img 
                     src={`/images/${selectedProduct.imageFolder}/${selectedProduct.images[currentImageIndex]}`} 
-                    alt={`Layout View`}
-                    className="w-full h-full object-contain p-4 mix-blend-multiply transition-all duration-300"
+                    alt="Active Dynamic Variant Design"
+                    className="w-full h-full object-contain p-4 mix-blend-multiply"
                   />
-                  
-                  <button type="button" onClick={prevImage} className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-neutral-900 w-10 h-10 rounded-full font-black text-sm flex items-center justify-center shadow-md border border-neutral-200 active:scale-90 transition">←</button>
-                  <button type="button" onClick={nextImage} className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-neutral-900 w-10 h-10 rounded-full font-black text-sm flex items-center justify-center shadow-md border border-neutral-200 active:scale-90 transition">→</button>
-                  
+                  <button type="button" onClick={prevImage} className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-neutral-900 w-10 h-10 rounded-full font-black text-sm flex items-center justify-center shadow-md border border-neutral-200 active:scale-90 transition cursor-pointer">←</button>
+                  <button type="button" onClick={nextImage} className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-neutral-900 w-10 h-10 rounded-full font-black text-sm flex items-center justify-center shadow-md border border-neutral-200 active:scale-90 transition cursor-pointer">→</button>
                   <div className="absolute bottom-3 right-3 bg-neutral-900/80 backdrop-blur-xs text-white font-mono font-bold text-[10px] px-2.5 py-1 rounded-md tracking-wider">
                     VARIATION: {currentImageIndex + 1} / 12
                   </div>
                 </div>
 
-                {/* HORIZONTAL SWIPEABLE THUMBNAIL TRACK */}
                 <div className="mt-4">
                   <p className="text-[11px] font-black text-neutral-400 uppercase tracking-wider mb-2">Available Design Variations (Select to View)</p>
                   <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin snap-x">
@@ -317,7 +412,7 @@ export default function Home() {
                         key={idx}
                         type="button"
                         onClick={() => setCurrentImageIndex(idx)}
-                        className={`w-16 h-16 sm:w-20 sm:h-20 rounded-xl border-2 bg-neutral-50 p-1 flex-shrink-0 snap-start transition-all overflow-hidden flex items-center justify-center ${currentImageIndex === idx ? 'border-indigo-600 ring-2 ring-indigo-100 shadow-sm' : 'border-neutral-200 hover:border-neutral-400'}`}
+                        className={`w-16 h-16 sm:w-20 sm:h-20 rounded-xl border-2 bg-neutral-50 p-1 flex-shrink-0 snap-start transition-all overflow-hidden flex items-center justify-center cursor-pointer ${currentImageIndex === idx ? 'border-indigo-600 ring-2 ring-indigo-100 shadow-sm' : 'border-neutral-200 hover:border-neutral-400'}`}
                       >
                         <img src={`/images/${selectedProduct.imageFolder}/${img}`} alt="" className="max-w-full max-h-full object-contain mix-blend-multiply" />
                       </button>
@@ -326,18 +421,15 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* RIGHT COLUMN: CONFIGURATION ENGINE CONTROLS */}
+              {/* RIGHT PARAMETER SELECTION VIEWS */}
               <div className="lg:col-span-6 p-4 sm:p-6 space-y-6 bg-neutral-50">
                 {!orderSubmitted ? (
                   <form onSubmit={handleCheckout} className="space-y-5">
-                    
-                    {/* MOBILE LIVE TOTAL READOUT BANNER */}
                     <div className="sm:hidden bg-white border border-neutral-200 p-3 rounded-2xl flex items-center justify-between shadow-xs">
                       <span className="text-xs font-bold text-neutral-500">Live Config Price:</span>
                       <span className="text-xl font-black text-indigo-600 font-mono">${calculateTotal().toFixed(2)}</span>
                     </div>
 
-                    {/* DYNAMIC SIZE SELECTOR ENGINE */}
                     <div className="space-y-2">
                       <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider">Step 1: Choose Dimensions & Size</label>
                       <div className="space-y-2">
@@ -363,7 +455,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* TWO-COLOR / DOUBLE LAYER CONFIGURATION PANEL */}
                     <div className="bg-white border border-neutral-200 rounded-2xl p-4 space-y-3 shadow-xs">
                       <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider">Step 2: Acrylic Layer Configuration</label>
                       <div className="grid grid-cols-1 gap-2">
@@ -397,7 +488,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* DYNAMIC SMART COLOR DROPDOWNS SECTION */}
                     <div className="space-y-4 bg-white border border-neutral-200 p-4 rounded-2xl shadow-xs">
                       <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider border-b border-neutral-100 pb-1">Step 3: Select Color Finishes</label>
                       
@@ -407,7 +497,7 @@ export default function Home() {
                           <select 
                             value={singleColor} 
                             onChange={(e) => setSingleColor(e.target.value)} 
-                            className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs bg-white font-bold text-neutral-800 shadow-2xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                            className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs bg-white font-bold text-neutral-800 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                           >
                             {MATERIALS.map((mat, idx) => (
                               <option key={idx} value={mat.name}>{mat.name}</option>
@@ -421,7 +511,7 @@ export default function Home() {
                             <select 
                               value={frontColor} 
                               onChange={(e) => setFrontColor(e.target.value)} 
-                              className="w-full px-3 py-2.5 border border-indigo-200 bg-indigo-50/10 rounded-xl text-xs bg-white font-bold text-neutral-800 shadow-2xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                              className="w-full px-3 py-2.5 border border-indigo-200 bg-indigo-50/10 rounded-xl text-xs bg-white font-bold text-neutral-800 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                             >
                               {MATERIALS.map((mat, idx) => (
                                 <option key={idx} value={mat.name}>{mat.name}</option>
@@ -434,7 +524,7 @@ export default function Home() {
                             <select 
                               value={backColor} 
                               onChange={(e) => setBackColor(e.target.value)} 
-                              className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs bg-white font-bold text-neutral-800 shadow-2xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                              className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs bg-white font-bold text-neutral-800 focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
                             >
                               {MATERIALS.map((mat, idx) => (
                                 <option key={idx} value={mat.name}>{mat.name}</option>
@@ -447,14 +537,13 @@ export default function Home() {
                       <div className="flex items-center justify-between border-t border-neutral-100 pt-3">
                         <label className="text-[11px] font-black text-neutral-800 uppercase tracking-wider">Order Quantity</label>
                         <div className="flex items-center gap-3">
-                          <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-9 h-9 bg-neutral-100 hover:bg-neutral-200 active:scale-95 border border-neutral-200 rounded-xl font-black text-sm flex items-center justify-center transition shadow-2xs">-</button>
+                          <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-9 h-9 bg-neutral-100 border border-neutral-200 rounded-xl font-black text-sm flex items-center justify-center cursor-pointer">-</button>
                           <span className="font-mono font-black text-base text-neutral-900 w-6 text-center">{quantity}</span>
-                          <button type="button" onClick={() => setQuantity(q => q + 1)} className="w-9 h-9 bg-neutral-100 hover:bg-neutral-200 active:scale-95 border border-neutral-200 rounded-xl font-black text-sm flex items-center justify-center transition shadow-2xs">+</button>
+                          <button type="button" onClick={() => setQuantity(q => q + 1)} className="w-9 h-9 bg-neutral-100 border border-neutral-200 rounded-xl font-black text-sm flex items-center justify-center cursor-pointer">+</button>
                         </div>
                       </div>
                     </div>
 
-                    {/* CUSTOM DETAILS FORM SUMMARY */}
                     <div className="space-y-3 bg-white border border-neutral-200 p-4 rounded-2xl shadow-xs">
                       <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider">Step 4: Customization Engraving Details</label>
                       <div>
@@ -473,7 +562,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* FINAL SUM CHECKOUT ACTION PANEL */}
                     <div className="bg-gradient-to-r from-neutral-900 to-neutral-950 p-4 rounded-2xl text-white space-y-3 shadow-lg">
                       <div className="flex justify-between items-center">
                         <div>
@@ -482,24 +570,21 @@ export default function Home() {
                         </div>
                         <span className="text-2xl font-black text-indigo-400 font-mono">${calculateTotal().toFixed(2)}</span>
                       </div>
-                      <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-xl font-black text-xs tracking-widest uppercase shadow-md transition active:scale-[0.99]">
+                      <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-xl font-black text-xs tracking-widest uppercase shadow-md transition active:scale-[0.99] cursor-pointer">
                         Submit Order Specs to WhatsApp →
                       </button>
                     </div>
-
                   </form>
                 ) : (
                   <div className="text-center py-16 bg-white border border-neutral-200 rounded-3xl space-y-4 shadow-xs">
                     <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto font-black text-3xl">✓</div>
                     <h3 className="text-2xl font-black text-neutral-900 tracking-tight">Specs Sent Successfully!</h3>
                     <p className="text-xs text-neutral-500 max-w-xs mx-auto">We have opened WhatsApp on your device. Send the auto-generated message to submit your layout configurations to Shaan.</p>
-                    <button type="button" onClick={() => setOrderSubmitted(false)} className="text-indigo-600 text-xs font-bold underline">Modify setup configs</button>
+                    <button type="button" onClick={() => setOrderSubmitted(false)} className="text-indigo-600 text-xs font-bold underline cursor-pointer">Modify setup configs</button>
                   </div>
                 )}
               </div>
-
             </div>
-
           </div>
         </div>
       )}
