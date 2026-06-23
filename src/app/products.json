@@ -9,7 +9,13 @@
       "H2dcfa86e331143f7a6c1141a1c9f52d12.jpg",
       "H2fac60c36d844ebdb7efa7109576a51et.jpg",
       "H3049ebc6bb1c4c3a919139e59fa9d4ff0.jpg",
-      "H26944f4fc5e647c7a1e1faa9e792ce22e_2.jpg"
+      "H26944f4fc5e647c7a1e1faa9e792ce22e_2.jpg",
+	"lamps_1.jpg",
+"lamps_2.jpg",
+"lamps_3.jpg",
+"lamps_4.jpg",
+"lamps_5.jpg",
+"lamps_6.jpg"
     ]
   },
   {
@@ -19,8 +25,27 @@
     "short_desc": "Big, clean street numbers cut from premium acrylic layered on timber or floating mount standoffs.",
     "price": 79.00,
     "images": [
-      "sign1.jpg",
-      "sign2.jpg"
+      "hs_1.jpg",
+      "hs_2.jpg",
+	"hs_3.jpg",
+	"hs_4.jpg",
+"hs_5.jpg",
+"hs_6.jpg",
+"hs_7.jpg",
+"hs_8.jpg"
+    ]
+  },
+  {
+    "id": "prod_names",
+    "category": "script-names",
+    "name": "Custom 3D Script Name Signs",
+    "short_desc": "Stunning mirror gold and colored backing script plates for bedrooms, backdrops, and special events.",
+    "price": 45.00,
+    "images": [
+      "sn_1.jpg",
+"sn_2.jpg",
+"sn_3.jpg",
+"sn_4.jpg"
     ]
   }
 ]
