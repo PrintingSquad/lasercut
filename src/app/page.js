@@ -22,12 +22,17 @@ const SHAAN_GALLERY = [
 ];
 
 const MATERIALS = [
-  { name: "Clear Acrylic (3mm / 4.5mm)", type: "Premium Solid", class: "bg-gradient-to-br from-white/80 to-neutral-200/40 border-neutral-300 text-neutral-700 shadow-inner", desc: "Crystal clear, glass-like impact resistant sheets" },
-  { name: "Mirror Gold / Silver", type: "High Reflective", class: "bg-gradient-to-tr from-amber-300 via-zinc-100 to-amber-500 border-amber-400 text-amber-950", desc: "Luxurious mirror effect for signs and visual depth" },
-  { name: "Matte Gold / Silver", type: "Metallic", class: "bg-gradient-to-r from-yellow-600 via-zinc-400 to-yellow-700 border-neutral-400 text-neutral-100", desc: "Muted, upscale satin metal finish without glare" },
-  { name: "Glossy White / Black", type: "Classic High Shine", class: "bg-gradient-to-r from-white via-neutral-400 to-neutral-900 border-neutral-300 text-neutral-900", desc: "Ultra-slick polished look, great for layered designs" },
-  { name: "Matte White / Black", type: "Satin Solid", class: "bg-gradient-to-r from-neutral-100 to-neutral-800 border-neutral-400 text-white", desc: "Smooth anti-reflective matte texture for high readability" },
-  { name: "MDF Wood (White / Brown)", type: "Natural Timber", class: "bg-gradient-to-br from-amber-100 via-amber-200 to-amber-700 border-amber-800 text-amber-950", desc: "Eco-friendly natural wood textures and custom finished surfaces" }
+  { name: "Clear Acrylic (3mm / 4.5mm)" },
+  { name: "Mirror Gold Acrylic" },
+  { name: "Mirror Silver Acrylic" },
+  { name: "Glossy White Acrylic" },
+  { name: "Glossy Black Acrylic" },
+  { name: "Matte White Acrylic" },
+  { name: "Matte Black Acrylic" },
+  { name: "Matte Gold Acrylic" },
+  { name: "Matte Silver Acrylic" },
+  { name: "MDF Wood (Natural Light Brown)" },
+  { name: "MDF Wood (Satin White Finish)" }
 ];
 
 const SIZE_TIERS = [
@@ -49,7 +54,12 @@ export default function Home() {
   const [name, setName] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [customText, setCustomText] = useState('');
-  const [chosenColor, setChosenColor] = useState('Clear Acrylic (3mm / 4.5mm)');
+  
+  // Color Selection States
+  const [singleColor, setSingleColor] = useState('Clear Acrylic (3mm / 4.5mm)');
+  const [frontColor, setFrontColor] = useState('Mirror Gold Acrylic');
+  const [backColor, setBackColor] = useState('Glossy Black Acrylic');
+  
   const [selectedSizeId, setSelectedSizeId] = useState('small');
   const [isTwoColor, setIsTwoColor] = useState(false); 
   const [deliveryMethod, setDeliveryMethod] = useState('Shipping');
@@ -104,7 +114,12 @@ export default function Home() {
     const variantViewed = selectedProduct.images[currentImageIndex];
     const currentSizeName = SIZE_TIERS.find(s => s.id === selectedSizeId)?.name || 'Custom';
 
-    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Layout Image Ref:* Folder: [${selectedProduct.imageFolder}] / File: [${variantViewed}]\n*Quantity:* ${quantity}x\n\n*🔧 SPECS:*\n- *Size Selection:* ${currentSizeName}\n- *Material Style:* ${chosenColor}\n- *Layering Profile:* ${isTwoColor ? 'Two Colors (Double Layer Layered Acrylic)' : 'Single Color Blocked'}\n- *Calculated Rate Per Unit:* $${unitPrice.toFixed(2)}\n- *Total Computed Price:* $${finalTotal.toFixed(2)}\n\n*👤 CUSTOMER DETAILS:*\n- Name: ${name}\n- WhatsApp: ${whatsapp}\n\n*📝 CUSTOMIZATION REQUEST:*\n"${customText}"\n\n*Delivery Layout:* ${deliveryMethod}`;
+    // Format color choices depending on layout choice
+    const colorOutputString = isTwoColor 
+      ? `FRONT Layer: ${frontColor} | BACK Layer: ${backColor}`
+      : `Single Solid Color: ${singleColor}`;
+
+    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Layout Image Ref:* Folder: [${selectedProduct.imageFolder}] / File: [${variantViewed}]\n*Quantity:* ${quantity}x\n\n*🔧 SPECS:*\n- *Size Selection:* ${currentSizeName}\n- *Layering Profile:* ${isTwoColor ? 'Two Colors (Double Layer Acrylic)' : 'Single Color Blocked'}\n- *Color Choices:* ${colorOutputString}\n- *Calculated Rate Per Unit:* $${unitPrice.toFixed(2)}\n- *Total Computed Price:* $${finalTotal.toFixed(2)}\n\n*👤 CUSTOMER DETAILS:*\n- Name: ${name}\n- WhatsApp: ${whatsapp}\n\n*📝 CUSTOMIZATION REQUEST:*\n"${customText}"\n\n*Delivery Layout:* ${deliveryMethod}`;
     
     window.open(`https://wa.me/61412345678?text=${encodeURIComponent(message)}`, '_blank');
   };
@@ -206,7 +221,9 @@ export default function Home() {
                     setCurrentImageIndex(0);
                     setSelectedSizeId('small');
                     setIsTwoColor(false);
-                    setChosenColor('Clear Acrylic (3mm / 4.5mm)');
+                    setSingleColor('Clear Acrylic (3mm / 4.5mm)');
+                    setFrontColor('Mirror Gold Acrylic');
+                    setBackColor('Glossy Black Acrylic');
                   }}
                   className="w-full bg-neutral-900 hover:bg-indigo-600 text-white py-4 rounded-2xl font-bold text-sm tracking-wider transition-all uppercase shadow-md"
                 >
@@ -218,70 +235,7 @@ export default function Home() {
         </div>
       </main>
 
-      {/* MATERIAL STUDIO SECTIONS */}
-      <section className="max-w-7xl mx-auto px-6 pb-20">
-        <div className="bg-white border border-neutral-200/80 rounded-[2rem] p-8 shadow-sm space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <h2 className="text-3xl font-black tracking-tight text-neutral-900">Premium Material Studio</h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {MATERIALS.map((mat, i) => (
-              <div key={i} className="border border-neutral-200 p-4 rounded-2xl flex items-center gap-4 bg-neutral-50 shadow-2xs">
-                <div className={`w-16 h-16 rounded-xl border flex flex-col items-center justify-center font-black text-[9px] uppercase shadow-inner tracking-tighter text-center px-1 shrink-0 leading-tight ${mat.class}`}>
-                  {mat.name.split(" (")[0]}
-                </div>
-                <div>
-                  <h4 className="font-bold text-neutral-900 text-xs sm:text-sm">{mat.name}</h4>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">{mat.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* MEET THE FOUNDER CARD */}
-      <section className="max-w-5xl mx-auto px-6 pb-24">
-        <div className="bg-gradient-to-br from-neutral-900 to-neutral-950 rounded-[2.5rem] p-8 md:p-12 text-white shadow-xl grid md:grid-cols-12 gap-8 items-center">
-          <div className="md:col-span-5 space-y-4">
-            <span className="text-indigo-400 font-mono text-xs uppercase tracking-widest font-bold">Behind The Laser Beam</span>
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">Meet Shaan,<br/>Our 10-Year-Old Chief Creator</h2>
-            <p className="text-neutral-400 text-sm font-medium leading-relaxed">
-              LaserCutAI isn't your typical corporate factory. Shaan started this journey right out of our garage in Box Hill, blending imagination with industrial tech to fund community donations and build custom works of art.
-            </p>
-          </div>
-          <div className="md:col-span-7 flex flex-col items-center justify-center">
-            <div className="w-full aspect-[4/5] max-w-sm rounded-2xl overflow-hidden bg-neutral-800 border border-neutral-700/50 relative group shadow-2xl">
-              <img src={`/images/shaan/${SHAAN_GALLERY[shaanIndex].file}`} alt="Shaan" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
-                <p className="text-white text-xs font-bold font-mono text-center bg-indigo-600/90 py-2 px-3 rounded-xl">{SHAAN_GALLERY[shaanIndex].caption}</p>
-              </div>
-            </div>
-            <div className="flex gap-2 mt-4">
-              {SHAAN_GALLERY.map((_, idx) => (
-                <button key={idx} onClick={() => setShaanIndex(idx)} className={`h-2 rounded-full transition-all ${shaanIndex === idx ? 'w-8 bg-indigo-500' : 'w-2 bg-neutral-700'}`} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* INFINITE ROLLING BRAND MARQUEE */}
-      <section className="bg-white py-10 border-t border-b border-neutral-200/50 overflow-hidden relative">
-        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#faf9f6] to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#faf9f6] to-transparent z-10 pointer-events-none" />
-        <div className="relative w-full overflow-hidden flex">
-          <div className="animate-marquee gap-6 flex items-center">
-            {SPONSOR_LOGOS.concat(SPONSOR_LOGOS).map((logo, idx) => (
-              <div key={idx} className="h-16 w-32 bg-neutral-50 border border-neutral-150 p-2.5 rounded-xl flex items-center justify-center shrink-0">
-                <img src={`/images/business/${logo}`} alt="Brand Logo" className="max-h-full max-w-full object-contain filter grayscale hover:grayscale-0 transition" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 🚀 AMAZON-STYLE FULL SCREEN SPLIT STUDIO OVERLAY */}
+      {/* AMAZON-STYLE FULL SCREEN SPLIT STUDIO OVERLAY */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-neutral-950/70 backdrop-blur-md flex justify-end z-50 transition-all duration-300">
           <div className="w-full lg:w-[85vw] xl:w-[75vw] h-full bg-neutral-50 shadow-2xl flex flex-col relative overflow-hidden animate-in slide-in-from-right duration-200">
@@ -320,7 +274,6 @@ export default function Home() {
                     className="w-full h-full object-contain p-4 mix-blend-multiply transition-all duration-300"
                   />
                   
-                  {/* FLOATING ACTION CANVAS SWITCHES */}
                   <button type="button" onClick={prevImage} className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-neutral-900 w-10 h-10 rounded-full font-black text-sm flex items-center justify-center shadow-md border border-neutral-200 active:scale-90 transition">←</button>
                   <button type="button" onClick={nextImage} className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-neutral-900 w-10 h-10 rounded-full font-black text-sm flex items-center justify-center shadow-md border border-neutral-200 active:scale-90 transition">→</button>
                   
@@ -343,13 +296,6 @@ export default function Home() {
                         <img src={`/images/${selectedProduct.imageFolder}/${img}`} alt="" className="max-w-full max-h-full object-contain mix-blend-multiply" />
                       </button>
                     ))}
-                  </div>
-                </div>
-
-                <div className="mt-6 hidden lg:block border-t border-neutral-100 pt-4">
-                  <div className="bg-amber-50 rounded-2xl p-4 border border-amber-200/60 text-amber-900 text-xs font-medium space-y-1">
-                    <span className="font-bold block">💡 Live Fabrication Preview</span>
-                    Our automated pricing system instantly re-calculates quotes based on surface length tiers and layout layering selected on the right panel.
                   </div>
                 </div>
               </div>
@@ -404,8 +350,8 @@ export default function Home() {
                             className="text-indigo-600 focus:ring-indigo-500 w-4 h-4"
                           />
                           <div className="text-xs">
-                            <span className="font-bold block">Single Solid Base Color</span>
-                            <span className="text-[10px] text-neutral-400 block font-medium">Standard baseline fabrication</span>
+                            <span className="font-bold block">One Color Structure (Single Layer)</span>
+                            <span className="text-[10px] text-neutral-400 block font-medium">Standard baseline flat layout fabrication</span>
                           </div>
                         </label>
                         
@@ -419,22 +365,60 @@ export default function Home() {
                           />
                           <div className="text-xs">
                             <span className="font-black text-indigo-600 block">Two Color Layered Accent (+50%)</span>
-                            <span className="text-[10px] text-neutral-500 block font-medium">Premium dual overlay for high-contrast visual pop</span>
+                            <span className="text-[10px] text-neutral-500 block font-medium">Premium dual overlay backing sheet setup</span>
                           </div>
                         </label>
                       </div>
                     </div>
 
-                    {/* CORE OPTIONS AND TEXTURES */}
+                    {/* DYNAMIC SMART COLOR DROPDOWNS SECTION */}
                     <div className="space-y-4 bg-white border border-neutral-200 p-4 rounded-2xl shadow-xs">
-                      <div>
-                        <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider mb-1.5">Step 3: Select Material Texture</label>
-                        <select value={chosenColor} onChange={(e) => setChosenColor(e.target.value)} className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs bg-white font-bold text-neutral-800 shadow-2xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden">
-                          {MATERIALS.map((mat, idx) => (
-                            <option key={idx} value={mat.name}>{mat.name}</option>
-                          ))}
-                        </select>
-                      </div>
+                      <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider border-b border-neutral-100 pb-1">Step 3: Select Color Finishes</label>
+                      
+                      {!isTwoColor ? (
+                        /* 🟢 SHOW ONLY ONE BOX FOR SINGLE LAYER PRODUCT */
+                        <div>
+                          <label className="block text-xs font-bold text-neutral-700 mb-1">Product Color Texture</label>
+                          <select 
+                            value={singleColor} 
+                            onChange={(e) => setSingleColor(e.target.value)} 
+                            className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs bg-white font-bold text-neutral-800 shadow-2xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                          >
+                            {MATERIALS.map((mat, idx) => (
+                              <option key={idx} value={mat.name}>{mat.name}</option>
+                            ))}
+                          </select>
+                        </div>
+                      ) : (
+                        /* 🔵 SHOW SEPARATE FRONT & BACK OPTIONS ONLY WHEN TWO-COLOR IS SELECTED */
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-150">
+                          <div>
+                            <label className="block text-xs font-black text-indigo-600 mb-1">Front Accent Color (Top Layer)</label>
+                            <select 
+                              value={frontColor} 
+                              onChange={(e) => setFrontColor(e.target.value)} 
+                              className="w-full px-3 py-2.5 border border-indigo-200 bg-indigo-50/10 rounded-xl text-xs bg-white font-bold text-neutral-800 shadow-2xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                            >
+                              {MATERIALS.map((mat, idx) => (
+                                <option key={idx} value={mat.name}>{mat.name}</option>
+                              ))}
+                            </select>
+                          </div>
+                          
+                          <div>
+                            <label className="block text-xs font-bold text-neutral-700 mb-1">Background Plate Color (Base Layer)</label>
+                            <select 
+                              value={backColor} 
+                              onChange={(e) => setBackColor(e.target.value)} 
+                              className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs bg-white font-bold text-neutral-800 shadow-2xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden"
+                            >
+                              {MATERIALS.map((mat, idx) => (
+                                <option key={idx} value={mat.name}>{mat.name}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                      )}
 
                       <div className="flex items-center justify-between border-t border-neutral-100 pt-3">
                         <label className="text-[11px] font-black text-neutral-800 uppercase tracking-wider">Order Quantity</label>
@@ -452,7 +436,7 @@ export default function Home() {
                       <div>
                         <textarea 
                           rows="2" 
-                          placeholder="Include text engravings, layout dimensions, or precise color options required." 
+                          placeholder="Include text engravings, names, layout dimensions, or precise design modifications required." 
                           required 
                           value={customText} 
                           onChange={(e) => setCustomText(e.target.value)} 
