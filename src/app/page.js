@@ -30,48 +30,92 @@ const MATERIALS = [
   { name: "MDF Wood (White / Brown)", type: "Natural Timber", class: "bg-gradient-to-br from-amber-100 via-amber-200 to-amber-700 border-amber-800 text-amber-950", desc: "Eco-friendly natural wood textures and custom finished surfaces" }
 ];
 
-const SIZES = [
-  { name: "Standard Base Size (Included)", extraCost: 0, desc: "Default size listed on the product catalog card." },
-  { name: "Medium Scale Upgrade (+ $25.00)", extraCost: 25, desc: "Up to A4 size/300mm equivalent — ideal for desk signs & small plates." },
-  { name: "Large Event Upgrade (+ $55.00)", extraCost: 55, desc: "Up to A2 size/600mm equivalent — prominent wall address signage." },
-  { name: "Industrial Maximum Single Sheet Upgrade (+ $140.00)", extraCost: 140, desc: "Massive 900mm x 1300mm layout — full machine threshold capacity." },
-  { name: "Infinite Multi-Panel Joined Custom Sign (Quote Required)", extraCost: 0, desc: "Linking multiple 900x1300mm sheets together seamlessly for colossal structural displays." }
+// Dynamic sizing configurations according to your business rules
+const SIZE_TIERS = [
+  { id: "small", name: "Small Size (Under 10cm)", desc: "Perfect for basic keychains, labels, tags, and small badges." },
+  { id: "medium", name: "Medium Size (10cm up to 15cm)", desc: "Flat rate upgrade for prominent desk items and identifiers." },
+  { id: "large_20cm", name: "Large Size (15cm to 20cm)", desc: "+$10 scale increase for wall markers and intermediate signs." },
+  { id: "large_25cm", name: "Extra Large Size (20cm to 25cm)", desc: "+$20 scale increase for retail displays and plaques." },
+  { id: "industrial", name: "Industrial Scale / Custom Display (Over 25cm)", desc: "Subject to full manual machine threshold review (Quoted via WhatsApp)." }
 ];
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0); // 🖼️ Dynamic Slider Index
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [shaanIndex, setShaanIndex] = useState(0);
   
+  // Customization Configuration States
   const [quantity, setQuantity] = useState(1);
   const [name, setName] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [customText, setCustomText] = useState('');
   const [chosenColor, setChosenColor] = useState('Clear Acrylic (3mm / 4.5mm)');
-  const [chosenSize, setChosenSize] = useState(SIZES[0]);
+  const [selectedSizeId, setSelectedSizeId] = useState('small');
+  const [isTwoColor, setIsTwoColor] = useState(false); // 🎨 Double Layer Flag
   const [deliveryMethod, setDeliveryMethod] = useState('Shipping');
   const [orderSubmitted, setOrderSubmitted] = useState(false);
 
+  // 🧮 Custom Dynamic Pricing Logic Implementation
+  const calculateSingleUnitOriginalPrice = () => {
+    if (!selectedProduct) return 0;
+    
+    // For industrial scale requests over 25cm, we return a baseline or mark for custom quote
+    if (selectedSizeId === 'industrial') return selectedProduct.price;
+
+    let originalPrice = selectedProduct.price;
+
+    if (selectedSizeId === 'small') {
+      // Small is under 10cm, falls directly onto your minimum item base rate (e.g. $8.00)
+      originalPrice = selectedProduct.price;
+    } else if (selectedSizeId === 'medium') {
+      // 10cm up to 15cm shifts to a flat $20.00 original base
+      originalPrice = 20.00;
+    } else if (selectedSizeId === 'large_20cm') {
+      // 15cm to 20cm is 5cm over medium -> $20 + $10 = $30.00
+      originalPrice = 30.00;
+    } else if (selectedSizeId === 'large_25cm') {
+      // 20cm to 25cm is 10cm over medium -> $20 + $20 = $40.00
+      originalPrice = 40.00;
+    }
+
+    return originalPrice;
+  };
+
+  const calculateFinalUnitPrice = () => {
+    const originalPrice = calculateSingleUnitOriginalPrice();
+    
+    // Rule: If two colors are requested, price = original + (original / 2)
+    if (isTwoColor) {
+      return originalPrice + (originalPrice / 2);
+    }
+    return originalPrice;
+  };
+
   const calculateTotal = () => {
     if (!selectedProduct) return 0;
-    let basePrice = selectedProduct.price;
-    if (selectedProduct.isComboEligible) {
+    const unitPrice = calculateFinalUnitPrice();
+    
+    // If user scales size past custom minimum tabs, bypass combo offers to ensure accuracy
+    let basePrice = unitPrice;
+    if (selectedProduct.isComboEligible && selectedSizeId === 'small' && !isTwoColor) {
       if (quantity === 1) basePrice = 8;
       else if (quantity === 2) basePrice = 15 / 2;
       else basePrice = (20 + (quantity - 3) * 6.50) / quantity;
     }
-    return (basePrice + chosenSize.extraCost) * quantity;
+    
+    return basePrice * quantity;
   };
 
   const handleCheckout = (e) => {
     e.preventDefault();
     setOrderSubmitted(true);
+    const unitPrice = calculateFinalUnitPrice();
     const finalTotal = calculateTotal();
-    const isBundleApplied = selectedProduct.isComboEligible && quantity >= 2;
     const variantViewed = selectedProduct.images[currentImageIndex];
+    const currentSizeName = SIZE_TIERS.find(s => s.id === selectedSizeId)?.name || 'Custom';
 
-    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Reference Image Finish:* Folder: [${selectedProduct.imageFolder}] / File: [${variantViewed}]\n*Quantity:* ${quantity}x\n*Size Selection:* ${chosenSize.name}\n*Material:* ${chosenColor}\n*Total Computed Price:* $${finalTotal.toFixed(2)}${isBundleApplied ? ' (Bundle Combo Applied!)' : ''}\n\n*Customer Details:*\n- Name: ${name}\n- WhatsApp: ${whatsapp}\n\n*Customization Request:*\n"${customText}"\n\n*Delivery:* ${deliveryMethod}`;
+    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Layout Image Ref:* Folder: [${selectedProduct.imageFolder}] / File: [${variantViewed}]\n*Quantity:* ${quantity}x\n\n*🔧 SPECS:*\n- *Size Selection:* ${currentSizeName}\n- *Material Style:* ${chosenColor}\n- *Layering Profile:* ${isTwoColor ? 'Two Colors (Double Layer Layered Acrylic)' : 'Single Color Blocked'}\n- *Calculated Rate Per Unit:* $${unitPrice.toFixed(2)}\n- *Total Computed Price:* $${finalTotal.toFixed(2)}\n\n*👤 CUSTOMER DETAILS:*\n- Name: ${name}\n- WhatsApp: ${whatsapp}\n\n*📝 CUSTOMIZATION REQUEST:*\n"${customText}"\n\n*Delivery Layout:* ${deliveryMethod}`;
     
     window.open(`https://wa.me/61412345678?text=${encodeURIComponent(message)}`, '_blank');
   };
@@ -141,47 +185,28 @@ export default function Home() {
         <div className="grid md:grid-cols-2 gap-8">
           {filteredProducts.map((product) => {
             const folderName = product.imageFolder || product.category;
-            // Display 1.jpg as the cover thumbnail on the main grid
             const featuredImage = `/images/${folderName}/1.jpg`;
 
             return (
               <div key={product.id} className="bg-white border border-neutral-200/60 rounded-3xl p-5 shadow-sm flex flex-col justify-between group relative">
                 {product.isComboEligible && (
                   <span className="absolute -top-3 -right-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-black tracking-widest px-3 py-1.5 rounded-xl shadow-md uppercase">
-                    🎉 Mix Combo Offer Available
+                    🎉 Mix Combo Available
                   </span>
                 )}
                 
                 <div>
                   <div className="overflow-hidden rounded-2xl mb-4 bg-neutral-100 aspect-[4/3] relative group-hover:opacity-95 transition flex items-center justify-center">
-                    <img 
-                      src={featuredImage} 
-                      alt={product.name} 
-                      className="w-full h-full object-contain p-2 bg-neutral-50"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                    <div className="absolute inset-0 hidden flex-col items-center justify-center text-neutral-400 font-mono text-center text-xs px-4">
-                      📸 [ Folder: public/images/{folderName}/ (Needs 1.jpg) ]
-                    </div>
+                    <img src={featuredImage} alt={product.name} className="w-full h-full object-contain p-2 bg-neutral-50" />
                   </div>
                   
                   <div className="flex justify-between items-baseline mb-2 gap-2">
                     <h3 className="text-lg md:text-xl font-black text-neutral-900 tracking-tight leading-tight">{product.name}</h3>
                     <span className="text-indigo-600 font-black text-lg bg-indigo-50 px-3 py-1 rounded-xl shrink-0">
-                      ${product.price}
+                      from ${product.price}
                     </span>
                   </div>
                   <p className="text-slate-600 text-xs sm:text-sm font-medium leading-relaxed mb-4">{product.short_desc}</p>
-                  
-                  {product.isComboEligible && (
-                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-6 text-xs text-amber-900 font-bold flex justify-between items-center">
-                      <span>🏷️ Multi-Buy Pricing:</span>
-                      <span className="font-mono">Mix & match: 1 for $8 | 2 for $15 | 3 for $20!</span>
-                    </div>
-                  )}
                 </div>
 
                 <button 
@@ -189,9 +214,10 @@ export default function Home() {
                     setSelectedProduct(product); 
                     setQuantity(1); 
                     setOrderSubmitted(false); 
-                    setCurrentImageIndex(0); // Reset gallery index
+                    setCurrentImageIndex(0);
+                    setSelectedSizeId('small');
+                    setIsTwoColor(false);
                     setChosenColor('Clear Acrylic (3mm / 4.5mm)');
-                    setChosenSize(SIZES[0]);
                   }}
                   className="w-full bg-neutral-900 hover:bg-indigo-600 text-white py-4 rounded-2xl font-bold text-sm tracking-wider transition-all uppercase shadow-md"
                 >
@@ -207,7 +233,7 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-6 pb-20">
         <div className="bg-white border border-neutral-200/80 rounded-[2rem] p-8 shadow-sm space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <h2 className="text-3xl font-black tracking-tight text-neutral-900">Premium Material & Scale Studio</h2>
+            <h2 className="text-3xl font-black tracking-tight text-neutral-900">Premium Material Studio</h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {MATERIALS.map((mat, i) => (
@@ -266,7 +292,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Modal Popup Slider & Configurator */}
+      {/* Modal Popup Configurator Engine */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-neutral-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
           <div className="bg-white max-w-md w-full rounded-3xl p-6 relative shadow-2xl border border-neutral-100 my-8">
@@ -279,34 +305,84 @@ export default function Home() {
                   <p className="text-xs text-neutral-500 mt-1">{selectedProduct.short_desc}</p>
                 </div>
 
-                {/* 🗺️ INTERACTIVE 12-IMAGE GALLERY SLIDER INTERFACE */}
+                {/* 12-Image Slider */}
                 <div className="relative overflow-hidden rounded-2xl bg-neutral-150 aspect-[4/3] flex items-center justify-center border border-neutral-200">
                   <img 
                     src={`/images/${selectedProduct.imageFolder}/${selectedProduct.images[currentImageIndex]}`} 
-                    alt={`Variant Layout ${currentImageIndex + 1}`}
+                    alt={`Layout Variant`}
                     className="w-full h-full object-contain p-2"
                   />
-                  
-                  {/* Left Swipe Button */}
-                  <button type="button" onClick={prevImage} className="absolute left-2 bg-black/60 hover:bg-indigo-600 text-white w-8 h-8 rounded-full font-black text-xs shadow transition-all">
-                    ←
-                  </button>
-                  
-                  {/* Right Swipe Button */}
-                  <button type="button" onClick={nextImage} className="absolute right-2 bg-black/60 hover:bg-indigo-600 text-white w-8 h-8 rounded-full font-black text-xs shadow transition-all">
-                    →
-                  </button>
-
-                  {/* Image Counter Badge */}
-                  <div className="absolute bottom-2 right-2 bg-black/70 text-white font-mono font-bold text-[10px] px-2.5 py-1 rounded-md tracking-wider">
+                  <button type="button" onClick={prevImage} className="absolute left-2 bg-black/60 text-white w-8 h-8 rounded-full font-black text-xs">←</button>
+                  <button type="button" onClick={nextImage} className="absolute right-2 bg-black/60 text-white w-8 h-8 rounded-full font-black text-xs">→</button>
+                  <div className="absolute bottom-2 right-2 bg-black/70 text-white font-mono font-bold text-[10px] px-2.5 py-1 rounded-md">
                     Variant Design: {currentImageIndex + 1} / 12
                   </div>
                 </div>
-                
-                <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3 flex items-center justify-between">
-                  <div>
-                    <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider">Order Quantity</label>
+
+                {/* 🔧 REAL-TIME DIMENSION MATERIAL SIZE PICKER */}
+                <div>
+                  <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider mb-1.5">Select Layout Material Size</label>
+                  <div className="space-y-2">
+                    {SIZE_TIERS.map((tier) => (
+                      <label 
+                        key={tier.id} 
+                        className={`flex items-start gap-3 p-2.5 rounded-xl border text-left cursor-pointer transition-all ${selectedSizeId === tier.id ? 'border-indigo-600 bg-indigo-50/40 shadow-xs' : 'border-neutral-200 bg-white hover:bg-neutral-50'}`}
+                      >
+                        <input 
+                          type="radio" 
+                          name="sizeTier" 
+                          value={tier.id} 
+                          checked={selectedSizeId === tier.id} 
+                          onChange={() => setSelectedSizeId(tier.id)}
+                          className="mt-0.5 text-indigo-600 focus:ring-indigo-500" 
+                        />
+                        <div>
+                          <p className="text-xs font-bold text-neutral-900">{tier.name}</p>
+                          <p className="text-[10px] text-neutral-500 leading-tight">{tier.desc}</p>
+                        </div>
+                      </label>
+                    ))}
                   </div>
+                </div>
+
+                {/* 🎨 COLOR LAYERING (SINGLE VS DOUBLE LAYER SHIFT) */}
+                <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3 space-y-2">
+                  <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider">Acrylic Layer Layout Setup</label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2 text-xs font-semibold text-neutral-700 cursor-pointer">
+                      <input 
+                        type="radio" 
+                        name="layerType" 
+                        checked={!isTwoColor} 
+                        onChange={() => setIsTwoColor(false)} 
+                        className="text-indigo-600"
+                      />
+                      Single Solid Base Color
+                    </label>
+                    <label className="flex items-center gap-2 text-xs font-black text-indigo-600 cursor-pointer">
+                      <input 
+                        type="radio" 
+                        name="layerType" 
+                        checked={isTwoColor} 
+                        onChange={() => setIsTwoColor(true)} 
+                        className="text-indigo-600"
+                      />
+                      Two Color Layered Accent (+50%)
+                    </label>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Select Material Texture</label>
+                  <select value={chosenColor} onChange={(e) => setChosenColor(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-xl text-xs bg-white font-semibold">
+                    {MATERIALS.map((mat, idx) => (
+                      <option key={idx} value={mat.name}>{mat.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3 flex items-center justify-between">
+                  <label className="text-[11px] font-bold text-neutral-700 uppercase tracking-wider">Order Quantity</label>
                   <div className="flex items-center gap-3">
                     <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-8 h-8 bg-white border border-neutral-300 rounded-lg font-black text-sm flex items-center justify-center shadow-xs">-</button>
                     <span className="font-mono font-black text-base text-neutral-900">{quantity}</span>
@@ -315,33 +391,8 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Select Dimension Scale</label>
-                  <select 
-                    value={chosenSize.name} 
-                    onChange={(e) => {
-                      const match = SIZES.find(s => s.name === e.target.value);
-                      if(match) setChosenSize(match);
-                    }} 
-                    className="w-full px-3 py-2 border border-neutral-200 rounded-xl text-xs bg-white font-semibold"
-                  >
-                    {SIZES.map((size, idx) => (
-                      <option key={idx} value={size.name}>{size.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Select Material Finish</label>
-                  <select value={chosenColor} onChange={(e) => setChosenColor(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-xl text-xs bg-white font-semibold">
-                    {MATERIALS.map((mat, idx) => (
-                      <option key={idx} value={mat.name}>{mat.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Customization Instructions</label>
-                  <textarea rows="2" placeholder="Include your exact custom text or describe which image number look you want built." required value={customText} onChange={(e) => setCustomText(e.target.value)} className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs font-medium" />
+                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Customization Copy Details</label>
+                  <textarea rows="2" placeholder="Include text engravings, layout dimensions, or precise color options required." required value={customText} onChange={(e) => setCustomText(e.target.value)} className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs font-medium" />
                 </div>
 
                 <div className="bg-neutral-50 rounded-xl p-3 space-y-2 border border-neutral-100">
@@ -350,7 +401,10 @@ export default function Home() {
                 </div>
 
                 <div className="border-t border-neutral-100 pt-3 flex justify-between items-center">
-                  <span className="text-xs text-neutral-500 font-bold block">Total Amount:</span>
+                  <div className="text-left">
+                    <span className="text-[10px] text-neutral-400 font-bold block uppercase tracking-wide">Unit price: ${calculateFinalUnitPrice().toFixed(2)}</span>
+                    <span className="text-xs text-neutral-500 font-bold block">Total Summary Amount:</span>
+                  </div>
                   <span className="text-2xl font-black text-indigo-600 font-mono">${calculateTotal().toFixed(2)}</span>
                 </div>
 
