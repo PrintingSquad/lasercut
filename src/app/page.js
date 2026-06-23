@@ -114,14 +114,37 @@ export default function Home() {
     const variantViewed = selectedProduct.images[currentImageIndex];
     const currentSizeName = SIZE_TIERS.find(s => s.id === selectedSizeId)?.name || 'Custom';
 
-    // Format color choices depending on layout choice
     const colorOutputString = isTwoColor 
       ? `FRONT Layer: ${frontColor} | BACK Layer: ${backColor}`
       : `Single Solid Color: ${singleColor}`;
 
-    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Layout Image Ref:* Folder: [${selectedProduct.imageFolder}] / File: [${variantViewed}]\n*Quantity:* ${quantity}x\n\n*🔧 SPECS:*\n- *Size Selection:* ${currentSizeName}\n- *Layering Profile:* ${isTwoColor ? 'Two Colors (Double Layer Acrylic)' : 'Single Color Blocked'}\n- *Color Choices:* ${colorOutputString}\n- *Calculated Rate Per Unit:* $${unitPrice.toFixed(2)}\n- *Total Computed Price:* $${finalTotal.toFixed(2)}\n\n*👤 CUSTOMER DETAILS:*\n- Name: ${name}\n- WhatsApp: ${whatsapp}\n\n*📝 CUSTOMIZATION REQUEST:*\n"${customText}"\n\n*Delivery Layout:* ${deliveryMethod}`;
-    
-    window.open(`https://wa.me/61412345678?text=${encodeURIComponent(message)}`, '_blank');
+    const lines = [
+      `[NEW ORDER FOR LASERCUTAI]`,
+      ``,
+      `*Product:* ${selectedProduct.name}`,
+      `*Layout Image Ref:* Folder: [${selectedProduct.imageFolder}] / File: [${variantViewed}]`,
+      `*Quantity:* ${quantity}x`,
+      ``,
+      `*DESIGN SPECS:*`,
+      `- *Size Selection:* ${currentSizeName}`,
+      `- *Layering Profile:* ${isTwoColor ? 'Two Colors (Double Layer Acrylic)' : 'Single Color Blocked'}`,
+      `- *Color Choices:* ${colorOutputString}`,
+      `- *Calculated Rate Per Unit:* $${unitPrice.toFixed(2)}`,
+      `- *Total Computed Price:* $${finalTotal.toFixed(2)}`,
+      ``,
+      `*CUSTOMER DETAILS:*`,
+      `- Name: ${name}`,
+      `- WhatsApp: ${whatsapp}`,
+      ``,
+      `*CUSTOMIZATION REQUEST:*`,
+      `"${customText}"`,
+      ``,
+      `*Delivery Layout:* ${deliveryMethod}`
+    ];
+
+    const finalEscapedString = encodeURIComponent(lines.join('\n'));
+    // UPDATED WHATSAPP MOBILE NUMBER: 61473508558
+    window.open(`https://wa.me/61473508558?text=${finalEscapedString}`, '_blank');
   };
 
   const nextImage = () => {
@@ -376,7 +399,6 @@ export default function Home() {
                       <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider border-b border-neutral-100 pb-1">Step 3: Select Color Finishes</label>
                       
                       {!isTwoColor ? (
-                        /* 🟢 SHOW ONLY ONE BOX FOR SINGLE LAYER PRODUCT */
                         <div>
                           <label className="block text-xs font-bold text-neutral-700 mb-1">Product Color Texture</label>
                           <select 
@@ -390,7 +412,6 @@ export default function Home() {
                           </select>
                         </div>
                       ) : (
-                        /* 🔵 SHOW SEPARATE FRONT & BACK OPTIONS ONLY WHEN TWO-COLOR IS SELECTED */
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-150">
                           <div>
                             <label className="block text-xs font-black text-indigo-600 mb-1">Front Accent Color (Top Layer)</label>
