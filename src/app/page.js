@@ -30,7 +30,6 @@ const MATERIALS = [
   { name: "MDF Wood (White / Brown)", type: "Natural Timber", class: "bg-gradient-to-br from-amber-100 via-amber-200 to-amber-700 border-amber-800 text-amber-950", desc: "Eco-friendly natural wood textures and custom finished surfaces" }
 ];
 
-// Dynamic sizing configurations according to your business rules
 const SIZE_TIERS = [
   { id: "small", name: "Small Size (Under 10cm)", desc: "Perfect for basic keychains, labels, tags, and small badges." },
   { id: "medium", name: "Medium Size (10cm up to 15cm)", desc: "Flat rate upgrade for prominent desk items and identifiers." },
@@ -52,30 +51,23 @@ export default function Home() {
   const [customText, setCustomText] = useState('');
   const [chosenColor, setChosenColor] = useState('Clear Acrylic (3mm / 4.5mm)');
   const [selectedSizeId, setSelectedSizeId] = useState('small');
-  const [isTwoColor, setIsTwoColor] = useState(false); // 🎨 Double Layer Flag
+  const [isTwoColor, setIsTwoColor] = useState(false); 
   const [deliveryMethod, setDeliveryMethod] = useState('Shipping');
   const [orderSubmitted, setOrderSubmitted] = useState(false);
 
-  // 🧮 Custom Dynamic Pricing Logic Implementation
   const calculateSingleUnitOriginalPrice = () => {
     if (!selectedProduct) return 0;
-    
-    // For industrial scale requests over 25cm, we return a baseline or mark for custom quote
     if (selectedSizeId === 'industrial') return selectedProduct.price;
 
     let originalPrice = selectedProduct.price;
 
     if (selectedSizeId === 'small') {
-      // Small is under 10cm, falls directly onto your minimum item base rate (e.g. $8.00)
       originalPrice = selectedProduct.price;
     } else if (selectedSizeId === 'medium') {
-      // 10cm up to 15cm shifts to a flat $20.00 original base
       originalPrice = 20.00;
     } else if (selectedSizeId === 'large_20cm') {
-      // 15cm to 20cm is 5cm over medium -> $20 + $10 = $30.00
       originalPrice = 30.00;
     } else if (selectedSizeId === 'large_25cm') {
-      // 20cm to 25cm is 10cm over medium -> $20 + $20 = $40.00
       originalPrice = 40.00;
     }
 
@@ -84,8 +76,6 @@ export default function Home() {
 
   const calculateFinalUnitPrice = () => {
     const originalPrice = calculateSingleUnitOriginalPrice();
-    
-    // Rule: If two colors are requested, price = original + (original / 2)
     if (isTwoColor) {
       return originalPrice + (originalPrice / 2);
     }
@@ -96,7 +86,6 @@ export default function Home() {
     if (!selectedProduct) return 0;
     const unitPrice = calculateFinalUnitPrice();
     
-    // If user scales size past custom minimum tabs, bypass combo offers to ensure accuracy
     let basePrice = unitPrice;
     if (selectedProduct.isComboEligible && selectedSizeId === 'small' && !isTwoColor) {
       if (quantity === 1) basePrice = 8;
@@ -196,8 +185,8 @@ export default function Home() {
                 )}
                 
                 <div>
-                  <div className="overflow-hidden rounded-2xl mb-4 bg-neutral-100 aspect-[4/3] relative group-hover:opacity-95 transition flex items-center justify-center">
-                    <img src={featuredImage} alt={product.name} className="w-full h-full object-contain p-2 bg-neutral-50" />
+                  <div className="overflow-hidden rounded-2xl mb-4 bg-neutral-50 aspect-[4/3] relative group-hover:opacity-95 transition flex items-center justify-center border border-neutral-100">
+                    <img src={featuredImage} alt={product.name} className="w-full h-full object-contain p-2" />
                   </div>
                   
                   <div className="flex justify-between items-baseline mb-2 gap-2">
@@ -221,7 +210,7 @@ export default function Home() {
                   }}
                   className="w-full bg-neutral-900 hover:bg-indigo-600 text-white py-4 rounded-2xl font-bold text-sm tracking-wider transition-all uppercase shadow-md"
                 >
-                  View Gallery & Configure
+                  Configure & Order
                 </button>
               </div>
             );
@@ -292,132 +281,217 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Modal Popup Configurator Engine */}
+      {/* 🚀 AMAZON-STYLE FULL SCREEN SPLIT STUDIO OVERLAY */}
       {selectedProduct && (
-        <div className="fixed inset-0 bg-neutral-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white max-w-md w-full rounded-3xl p-6 relative shadow-2xl border border-neutral-100 my-8">
-            <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-900 text-2xl font-bold p-2 z-10">&times;</button>
+        <div className="fixed inset-0 bg-neutral-950/70 backdrop-blur-md flex justify-end z-50 transition-all duration-300">
+          <div className="w-full lg:w-[85vw] xl:w-[75vw] h-full bg-neutral-50 shadow-2xl flex flex-col relative overflow-hidden animate-in slide-in-from-right duration-200">
             
-            {!orderSubmitted ? (
-              <form onSubmit={handleCheckout} className="space-y-4">
-                <div>
-                  <h3 className="text-xl font-black text-neutral-900">{selectedProduct.name}</h3>
-                  <p className="text-xs text-neutral-500 mt-1">{selectedProduct.short_desc}</p>
+            {/* STICKY RETAIL HEADER WITH CLEAR CLOSE ACTION */}
+            <div className="sticky top-0 z-50 bg-white border-b border-neutral-200 px-4 py-3 sm:px-6 flex justify-between items-center shadow-xs">
+              <div>
+                <h3 className="text-base sm:text-xl font-black text-neutral-900 tracking-tight leading-tight">{selectedProduct.name}</h3>
+                <p className="text-[11px] text-neutral-500 font-medium hidden sm:block mt-0.5">{selectedProduct.short_desc}</p>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-right font-mono hidden sm:block">
+                  <span className="text-xs text-neutral-400 block font-sans font-bold uppercase tracking-wider">Total Est.</span>
+                  <span className="text-xl font-black text-indigo-600">${calculateTotal().toFixed(2)}</span>
                 </div>
+                <button 
+                  onClick={() => setSelectedProduct(null)} 
+                  className="bg-neutral-100 hover:bg-neutral-200 text-neutral-800 px-4 py-2 rounded-xl text-xs sm:text-sm font-black tracking-wide border border-neutral-200 transition flex items-center gap-1.5 active:scale-95"
+                >
+                  <span>✕</span> Close
+                </button>
+              </div>
+            </div>
 
-                {/* 12-Image Slider */}
-                <div className="relative overflow-hidden rounded-2xl bg-neutral-150 aspect-[4/3] flex items-center justify-center border border-neutral-200">
+            {/* SPLIT RETAIL BOARD AREA */}
+            <div className="flex-1 overflow-y-auto grid lg:grid-cols-12 gap-0">
+              
+              {/* LEFT COLUMN: THE AMAZON-STYLE HERO GALLERY DISPLAY */}
+              <div className="lg:col-span-6 bg-white border-b lg:border-b-0 lg:border-r border-neutral-200 p-4 sm:p-6 flex flex-col justify-start lg:sticky lg:top-[65px] lg:h-[calc(100vh-65px)] overflow-y-auto">
+                
+                {/* LARGE SCREEN LIGHTBOX CANVAS */}
+                <div className="relative overflow-hidden rounded-2xl bg-neutral-50 aspect-[4/3] flex items-center justify-center border border-neutral-100 shadow-inner group">
                   <img 
                     src={`/images/${selectedProduct.imageFolder}/${selectedProduct.images[currentImageIndex]}`} 
-                    alt={`Layout Variant`}
-                    className="w-full h-full object-contain p-2"
+                    alt={`Layout View`}
+                    className="w-full h-full object-contain p-4 mix-blend-multiply transition-all duration-300"
                   />
-                  <button type="button" onClick={prevImage} className="absolute left-2 bg-black/60 text-white w-8 h-8 rounded-full font-black text-xs">←</button>
-                  <button type="button" onClick={nextImage} className="absolute right-2 bg-black/60 text-white w-8 h-8 rounded-full font-black text-xs">→</button>
-                  <div className="absolute bottom-2 right-2 bg-black/70 text-white font-mono font-bold text-[10px] px-2.5 py-1 rounded-md">
-                    Variant Design: {currentImageIndex + 1} / 12
+                  
+                  {/* FLOATING ACTION CANVAS SWITCHES */}
+                  <button type="button" onClick={prevImage} className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-neutral-900 w-10 h-10 rounded-full font-black text-sm flex items-center justify-center shadow-md border border-neutral-200 active:scale-90 transition">←</button>
+                  <button type="button" onClick={nextImage} className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-neutral-900 w-10 h-10 rounded-full font-black text-sm flex items-center justify-center shadow-md border border-neutral-200 active:scale-90 transition">→</button>
+                  
+                  <div className="absolute bottom-3 right-3 bg-neutral-900/80 backdrop-blur-xs text-white font-mono font-bold text-[10px] px-2.5 py-1 rounded-md tracking-wider">
+                    VARIATION: {currentImageIndex + 1} / 12
                   </div>
                 </div>
 
-                {/* 🔧 REAL-TIME DIMENSION MATERIAL SIZE PICKER */}
-                <div>
-                  <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider mb-1.5">Select Layout Material Size</label>
-                  <div className="space-y-2">
-                    {SIZE_TIERS.map((tier) => (
-                      <label 
-                        key={tier.id} 
-                        className={`flex items-start gap-3 p-2.5 rounded-xl border text-left cursor-pointer transition-all ${selectedSizeId === tier.id ? 'border-indigo-600 bg-indigo-50/40 shadow-xs' : 'border-neutral-200 bg-white hover:bg-neutral-50'}`}
+                {/* HORIZONTAL SWIPEABLE THUMBNAIL TRACK */}
+                <div className="mt-4">
+                  <p className="text-[11px] font-black text-neutral-400 uppercase tracking-wider mb-2">Available Design Variations (Select to View)</p>
+                  <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin snap-x">
+                    {selectedProduct.images.map((img, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setCurrentImageIndex(idx)}
+                        className={`w-16 h-16 sm:w-20 sm:h-20 rounded-xl border-2 bg-neutral-50 p-1 flex-shrink-0 snap-start transition-all overflow-hidden flex items-center justify-center ${currentImageIndex === idx ? 'border-indigo-600 ring-2 ring-indigo-100 shadow-sm' : 'border-neutral-200 hover:border-neutral-400'}`}
                       >
-                        <input 
-                          type="radio" 
-                          name="sizeTier" 
-                          value={tier.id} 
-                          checked={selectedSizeId === tier.id} 
-                          onChange={() => setSelectedSizeId(tier.id)}
-                          className="mt-0.5 text-indigo-600 focus:ring-indigo-500" 
-                        />
-                        <div>
-                          <p className="text-xs font-bold text-neutral-900">{tier.name}</p>
-                          <p className="text-[10px] text-neutral-500 leading-tight">{tier.desc}</p>
-                        </div>
-                      </label>
+                        <img src={`/images/${selectedProduct.imageFolder}/${img}`} alt="" className="max-w-full max-h-full object-contain mix-blend-multiply" />
+                      </button>
                     ))}
                   </div>
                 </div>
 
-                {/* 🎨 COLOR LAYERING (SINGLE VS DOUBLE LAYER SHIFT) */}
-                <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3 space-y-2">
-                  <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider">Acrylic Layer Layout Setup</label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 text-xs font-semibold text-neutral-700 cursor-pointer">
-                      <input 
-                        type="radio" 
-                        name="layerType" 
-                        checked={!isTwoColor} 
-                        onChange={() => setIsTwoColor(false)} 
-                        className="text-indigo-600"
-                      />
-                      Single Solid Base Color
-                    </label>
-                    <label className="flex items-center gap-2 text-xs font-black text-indigo-600 cursor-pointer">
-                      <input 
-                        type="radio" 
-                        name="layerType" 
-                        checked={isTwoColor} 
-                        onChange={() => setIsTwoColor(true)} 
-                        className="text-indigo-600"
-                      />
-                      Two Color Layered Accent (+50%)
-                    </label>
+                <div className="mt-6 hidden lg:block border-t border-neutral-100 pt-4">
+                  <div className="bg-amber-50 rounded-2xl p-4 border border-amber-200/60 text-amber-900 text-xs font-medium space-y-1">
+                    <span className="font-bold block">💡 Live Fabrication Preview</span>
+                    Our automated pricing system instantly re-calculates quotes based on surface length tiers and layout layering selected on the right panel.
                   </div>
                 </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Select Material Texture</label>
-                  <select value={chosenColor} onChange={(e) => setChosenColor(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-xl text-xs bg-white font-semibold">
-                    {MATERIALS.map((mat, idx) => (
-                      <option key={idx} value={mat.name}>{mat.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3 flex items-center justify-between">
-                  <label className="text-[11px] font-bold text-neutral-700 uppercase tracking-wider">Order Quantity</label>
-                  <div className="flex items-center gap-3">
-                    <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-8 h-8 bg-white border border-neutral-300 rounded-lg font-black text-sm flex items-center justify-center shadow-xs">-</button>
-                    <span className="font-mono font-black text-base text-neutral-900">{quantity}</span>
-                    <button type="button" onClick={() => setQuantity(q => q + 1)} className="w-8 h-8 bg-white border border-neutral-300 rounded-lg font-black text-sm flex items-center justify-center shadow-xs">+</button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Customization Copy Details</label>
-                  <textarea rows="2" placeholder="Include text engravings, layout dimensions, or precise color options required." required value={customText} onChange={(e) => setCustomText(e.target.value)} className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs font-medium" />
-                </div>
-
-                <div className="bg-neutral-50 rounded-xl p-3 space-y-2 border border-neutral-100">
-                  <input type="text" placeholder="Your Name" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-xs" />
-                  <input type="tel" placeholder="WhatsApp Number" required value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-xs" />
-                </div>
-
-                <div className="border-t border-neutral-100 pt-3 flex justify-between items-center">
-                  <div className="text-left">
-                    <span className="text-[10px] text-neutral-400 font-bold block uppercase tracking-wide">Unit price: ${calculateFinalUnitPrice().toFixed(2)}</span>
-                    <span className="text-xs text-neutral-500 font-bold block">Total Summary Amount:</span>
-                  </div>
-                  <span className="text-2xl font-black text-indigo-600 font-mono">${calculateTotal().toFixed(2)}</span>
-                </div>
-
-                <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3.5 rounded-xl font-bold text-xs tracking-widest uppercase shadow-md">
-                  Send Specs to WhatsApp
-                </button>
-              </form>
-            ) : (
-              <div className="text-center py-8 space-y-4">
-                <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto font-black text-3xl">✓</div>
-                <h3 className="text-2xl font-black text-neutral-900">Specs Forwarded!</h3>
               </div>
-            )}
+
+              {/* RIGHT COLUMN: CONFIGURATION ENGINE CONTROLS */}
+              <div className="lg:col-span-6 p-4 sm:p-6 space-y-6 bg-neutral-50">
+                {!orderSubmitted ? (
+                  <form onSubmit={handleCheckout} className="space-y-5">
+                    
+                    {/* MOBILE LIVE TOTAL READOUT BANNER */}
+                    <div className="sm:hidden bg-white border border-neutral-200 p-3 rounded-2xl flex items-center justify-between shadow-xs">
+                      <span className="text-xs font-bold text-neutral-500">Live Config Price:</span>
+                      <span className="text-xl font-black text-indigo-600 font-mono">${calculateTotal().toFixed(2)}</span>
+                    </div>
+
+                    {/* DYNAMIC SIZE SELECTOR ENGINE */}
+                    <div className="space-y-2">
+                      <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider">Step 1: Choose Dimensions & Size</label>
+                      <div className="space-y-2">
+                        {SIZE_TIERS.map((tier) => (
+                          <label 
+                            key={tier.id} 
+                            className={`flex items-start gap-3 p-3 rounded-xl border text-left cursor-pointer transition-all ${selectedSizeId === tier.id ? 'border-indigo-600 bg-white shadow-xs ring-1 ring-indigo-50' : 'border-neutral-200 bg-white hover:bg-neutral-50'}`}
+                          >
+                            <input 
+                              type="radio" 
+                              name="sizeTierStudio" 
+                              value={tier.id} 
+                              checked={selectedSizeId === tier.id} 
+                              onChange={() => setSelectedSizeId(tier.id)}
+                              className="mt-0.5 text-indigo-600 focus:ring-indigo-500 w-4 h-4" 
+                            />
+                            <div>
+                              <p className="text-xs font-bold text-neutral-900">{tier.name}</p>
+                              <p className="text-[10px] text-neutral-500 leading-tight mt-0.5">{tier.desc}</p>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* TWO-COLOR / DOUBLE LAYER CONFIGURATION PANEL */}
+                    <div className="bg-white border border-neutral-200 rounded-2xl p-4 space-y-3 shadow-xs">
+                      <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider">Step 2: Acrylic Layer Configuration</label>
+                      <div className="grid grid-cols-1 gap-2">
+                        <label className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${!isTwoColor ? 'border-indigo-600 bg-indigo-50/20 text-neutral-900' : 'border-neutral-200 bg-white text-neutral-700'}`}>
+                          <input 
+                            type="radio" 
+                            name="layerTypeStudio" 
+                            checked={!isTwoColor} 
+                            onChange={() => setIsTwoColor(false)} 
+                            className="text-indigo-600 focus:ring-indigo-500 w-4 h-4"
+                          />
+                          <div className="text-xs">
+                            <span className="font-bold block">Single Solid Base Color</span>
+                            <span className="text-[10px] text-neutral-400 block font-medium">Standard baseline fabrication</span>
+                          </div>
+                        </label>
+                        
+                        <label className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${isTwoColor ? 'border-indigo-600 bg-indigo-50/20 text-neutral-900 shadow-xs' : 'border-neutral-200 bg-white text-neutral-700'}`}>
+                          <input 
+                            type="radio" 
+                            name="layerTypeStudio" 
+                            checked={isTwoColor} 
+                            onChange={() => setIsTwoColor(true)} 
+                            className="text-indigo-600 focus:ring-indigo-500 w-4 h-4"
+                          />
+                          <div className="text-xs">
+                            <span className="font-black text-indigo-600 block">Two Color Layered Accent (+50%)</span>
+                            <span className="text-[10px] text-neutral-500 block font-medium">Premium dual overlay for high-contrast visual pop</span>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* CORE OPTIONS AND TEXTURES */}
+                    <div className="space-y-4 bg-white border border-neutral-200 p-4 rounded-2xl shadow-xs">
+                      <div>
+                        <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider mb-1.5">Step 3: Select Material Texture</label>
+                        <select value={chosenColor} onChange={(e) => setChosenColor(e.target.value)} className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs bg-white font-bold text-neutral-800 shadow-2xs focus:ring-2 focus:ring-indigo-500 focus:outline-hidden">
+                          {MATERIALS.map((mat, idx) => (
+                            <option key={idx} value={mat.name}>{mat.name}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="flex items-center justify-between border-t border-neutral-100 pt-3">
+                        <label className="text-[11px] font-black text-neutral-800 uppercase tracking-wider">Order Quantity</label>
+                        <div className="flex items-center gap-3">
+                          <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))} className="w-9 h-9 bg-neutral-100 hover:bg-neutral-200 active:scale-95 border border-neutral-200 rounded-xl font-black text-sm flex items-center justify-center transition shadow-2xs">-</button>
+                          <span className="font-mono font-black text-base text-neutral-900 w-6 text-center">{quantity}</span>
+                          <button type="button" onClick={() => setQuantity(q => q + 1)} className="w-9 h-9 bg-neutral-100 hover:bg-neutral-200 active:scale-95 border border-neutral-200 rounded-xl font-black text-sm flex items-center justify-center transition shadow-2xs">+</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* CUSTOM DETAILS FORM SUMMARY */}
+                    <div className="space-y-3 bg-white border border-neutral-200 p-4 rounded-2xl shadow-xs">
+                      <label className="block text-[11px] font-black text-neutral-800 uppercase tracking-wider">Step 4: Customization Engraving Details</label>
+                      <div>
+                        <textarea 
+                          rows="2" 
+                          placeholder="Include text engravings, layout dimensions, or precise color options required." 
+                          required 
+                          value={customText} 
+                          onChange={(e) => setCustomText(e.target.value)} 
+                          className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-indigo-500" 
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        <input type="text" placeholder="Your Full Name" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-indigo-500" />
+                        <input type="tel" placeholder="WhatsApp Phone" required value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-indigo-500" />
+                      </div>
+                    </div>
+
+                    {/* FINAL SUM CHECKOUT ACTION PANEL */}
+                    <div className="bg-gradient-to-r from-neutral-900 to-neutral-950 p-4 rounded-2xl text-white space-y-3 shadow-lg">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <span className="text-[10px] text-neutral-400 font-bold block uppercase tracking-wide">Unit rate: ${calculateFinalUnitPrice().toFixed(2)}</span>
+                          <span className="text-xs text-neutral-300 font-bold">Total Estimated Order Price:</span>
+                        </div>
+                        <span className="text-2xl font-black text-indigo-400 font-mono">${calculateTotal().toFixed(2)}</span>
+                      </div>
+                      <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-xl font-black text-xs tracking-widest uppercase shadow-md transition active:scale-[0.99]">
+                        Submit Order Specs to WhatsApp →
+                      </button>
+                    </div>
+
+                  </form>
+                ) : (
+                  <div className="text-center py-16 bg-white border border-neutral-200 rounded-3xl space-y-4 shadow-xs">
+                    <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto font-black text-3xl">✓</div>
+                    <h3 className="text-2xl font-black text-neutral-900 tracking-tight">Specs Sent Successfully!</h3>
+                    <p className="text-xs text-neutral-500 max-w-xs mx-auto">We have opened WhatsApp on your device. Send the auto-generated message to submit your layout configurations to Shaan.</p>
+                    <button type="button" onClick={() => setOrderSubmitted(false)} className="text-indigo-600 text-xs font-bold underline">Modify setup configs</button>
+                  </div>
+                )}
+              </div>
+
+            </div>
+
           </div>
         </div>
       )}
