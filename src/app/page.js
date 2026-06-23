@@ -2,18 +2,28 @@
 import React, { useState } from 'react';
 import productsData from './products.json';
 
-// Verbatim list of all the business and brand files you have in your public/images/business/ folder
+// Verbatim list matching your local C:\...\public\images\business\ directory exactly
 const SPONSOR_LOGOS = [
-  "Untitled-4.jpg",
-  "Sydney.jpg",
-  "Travelcrafters-Logo-NEW.jpg",
-  "vector-decorative-kangaroo-patterned-design-44625880.jpeg",
-  "WhatsApp Image 2024-08-01 at 1.56.33 PM.jpeg",
   "AET logo.png",
-  "Boss Automotive.jpg",
+  "Boss Automotive.PNG",
   "Dealwala Logo.jpg",
   "Desi Kothi Sydney.jpg",
-  "Dishas Kitchen.jpg"
+  "Dishas Kitchen.png",
+  "Emblem_of_India_svg3.gif",
+  "Honest-Logo NEW.jpg",
+  "Indian Matrimonial.png",
+  "istockphoto-1320299224-612x612.jpg",
+  "LaserCutCaravanLoveHeartbeatWallDecor.jpg",
+  "Logo SBI Australia.jpg",
+  "Prudential Edu - NEW.jpg",
+  "Radhe.jpg",
+  "RDFM LOGO.jpg",
+  "Savaa properties-NEW.jpg",
+  "Select Insure - NEW.jpg",
+  "SVCC LOGO_2023.png",
+  "Sydney.jpg",
+  "Travelcrafters-Logo-NEW.jpg",
+  "vector-decorative-kangaroo-patterned-design-44625880.jpeg"
 ];
 
 export default function Home() {
