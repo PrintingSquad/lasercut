@@ -22,12 +22,12 @@ const SHAAN_GALLERY = [
 ];
 
 const MATERIALS = [
-  { name: "Mirror Gold", type: "Metallic", class: "bg-gradient-to-tr from-amber-300 via-yellow-100 to-amber-500 border-amber-400 text-amber-950", desc: "High-reflection luxury finish for signs & weddings" },
-  { name: "Mirror Silver", type: "Metallic", class: "bg-gradient-to-tr from-zinc-300 via-neutral-100 to-zinc-400 border-zinc-300 text-zinc-900", desc: "Crisp, modern reflective finish for premium corporate looks" },
-  { name: "Matte Jet Black", type: "Classic Solid", class: "bg-neutral-900 border-neutral-950 text-neutral-100", desc: "Sophisticated, non-reflective deep black acrylic" },
-  { name: "Glossy Arctic White", type: "Classic Solid", class: "bg-white border-neutral-200 text-neutral-900", desc: "Clean high-shine bright white, perfect for multi-layering" },
-  { name: "Galaxy Glitter Blue", type: "Specialty", class: "bg-gradient-to-br from-indigo-600 via-purple-500 to-blue-700 border-indigo-400 text-white animate-pulse", desc: "Embedded dazzling glitter flakes for statement keychains & earrings" },
-  { name: "Rose Gold Glitter", type: "Specialty", class: "bg-gradient-to-br from-pink-400 via-rose-200 to-pink-500 border-pink-300 text-rose-950", desc: "Sparkling elegant finish catching beautiful light reflections" }
+  { name: "Clear Acrylic (3mm / 4.5mm)", type: "Premium Solid", class: "bg-gradient-to-br from-white/80 to-neutral-200/40 border-neutral-300 text-neutral-700 shadow-inner", desc: "Crystal clear, glass-like impact resistant sheets" },
+  { name: "Mirror Gold / Silver", type: "High Reflective", class: "bg-gradient-to-tr from-amber-300 via-zinc-100 to-amber-500 border-amber-400 text-amber-950", desc: "Luxurious mirror effect for signs and visual depth" },
+  { name: "Matte Gold / Silver", type: "Metallic", class: "bg-gradient-to-r from-yellow-600 via-zinc-400 to-yellow-700 border-neutral-400 text-neutral-100", desc: "Muted, upscale satin metal finish without glare" },
+  { name: "Glossy White / Black", type: "Classic High Shine", class: "bg-gradient-to-r from-white via-neutral-400 to-neutral-900 border-neutral-300 text-neutral-900", desc: "Ultra-slick polished look, great for layered designs" },
+  { name: "Matte White / Black", type: "Satin Solid", class: "bg-gradient-to-r from-neutral-100 to-neutral-800 border-neutral-400 text-white", desc: "Smooth anti-reflective matte texture for high readability" },
+  { name: "MDF Wood (White / Brown)", type: "Natural Timber", class: "bg-gradient-to-br from-amber-100 via-amber-200 to-amber-700 border-amber-800 text-amber-950", desc: "Eco-friendly natural wood textures and custom finished surfaces" }
 ];
 
 export default function Home() {
@@ -38,19 +38,35 @@ export default function Home() {
   const [email, setEmail] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [customText, setCustomText] = useState('');
-  const [chosenColor, setChosenColor] = useState('Mirror Gold');
+  const [chosenColor, setChosenColor] = useState('Clear Acrylic (3mm / 4.5mm)');
   const [deliveryMethod, setDeliveryMethod] = useState('Shipping');
   const [orderSubmitted, setOrderSubmitted] = useState(false);
 
   const handleCheckout = (e) => {
     e.preventDefault();
     setOrderSubmitted(true);
-    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Material/Color:* ${chosenColor}\n*Price:* $${selectedProduct.price.toFixed(2)}\n\n*Customer:*\n- Name: ${name}\n- Phone: ${whatsapp}\n\n*Specs:* "${customText}"\n- Fulfillment: ${deliveryMethod}`;
+    const message = `⚡️ *NEW ORDER FOR LASERCUTAI* ⚡️\n\n*Product:* ${selectedProduct.name}\n*Material Choice:* ${chosenColor}\n*Price:* $${selectedProduct.price.toFixed(2)}\n\n*Customer:*\n- Name: ${name}\n- Phone: ${whatsapp}\n\n*Specs:* "${customText}"\n- Fulfillment: ${deliveryMethod}`;
     window.open(`https://wa.me/61412345678?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f6] text-slate-900 font-sans antialiased">
+    <div className="min-h-screen bg-[#faf9f6] text-slate-900 font-sans antialiased overflow-x-hidden">
+      {/* Dynamic Scrolling Animation Logic injected in header style */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes marquee {
+          0% { transform: translateX(0%); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          display: flex;
+          width: max-content;
+          animation: marquee 35s linear infinite;
+        }
+        .animate-marquee:hover {
+          animation-play-state: paused;
+        }
+      `}} />
+
       <div className="bg-indigo-600 text-white text-center py-2 px-4 text-xs font-bold uppercase tracking-wider">
         ❤️ Every order supports a 10-year-old's business dream & local community donations!
       </div>
@@ -101,7 +117,7 @@ export default function Home() {
                 </div>
 
                 <button 
-                  onClick={() => { setSelectedProduct(product); setOrderSubmitted(false); setChosenColor('Mirror Gold'); }}
+                  onClick={() => { setSelectedProduct(product); setOrderSubmitted(false); setChosenColor('Clear Acrylic (3mm / 4.5mm)'); }}
                   className="w-full bg-neutral-900 hover:bg-indigo-600 text-white py-4 rounded-2xl font-bold text-sm tracking-wider transition-all uppercase shadow-md"
                 >
                   Customize This Style
@@ -118,20 +134,19 @@ export default function Home() {
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <h2 className="text-3xl font-black tracking-tight text-neutral-900">Premium Material Studio</h2>
             <p className="text-slate-600 text-sm font-medium">
-              We stock the finest 3mm shatterproof acrylics. Select any finish below to apply to your custom sign, keychain, or custom cutout.
+              We carry a heavy stock of premium industrial mediums ready for instantaneous cutting configuration.
             </p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {MATERIALS.map((mat, i) => (
               <div key={i} className="border border-neutral-200 p-4 rounded-2xl flex items-center gap-4 bg-neutral-50 shadow-2xs">
-                <div className={`w-16 h-16 rounded-xl border flex flex-col items-center justify-center font-black text-[10px] uppercase shadow-inner tracking-tighter text-center px-1 shrink-0 ${mat.class}`}>
-                  {mat.name}
+                <div className={`w-16 h-16 rounded-xl border flex flex-col items-center justify-center font-black text-[9px] uppercase shadow-inner tracking-tighter text-center px-1 shrink-0 leading-tight ${mat.class}`}>
+                  {mat.name.split(" (")[0]}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h4 className="font-bold text-neutral-900 text-sm">{mat.name}</h4>
-                    <span className="bg-neutral-200/80 text-neutral-700 font-mono font-bold text-[9px] px-1.5 py-0.5 rounded-md uppercase tracking-wider">{mat.type}</span>
+                    <h4 className="font-bold text-neutral-900 text-xs sm:text-sm">{mat.name}</h4>
                   </div>
                   <p className="text-xs text-slate-500 font-medium mt-0.5">{mat.desc}</p>
                 </div>
@@ -201,24 +216,28 @@ export default function Home() {
         </div>
       )}
 
-      {/* Brand Partners Showcase Grid */}
-      <section className="bg-neutral-100 py-16 px-6 border-t border-neutral-200/60">
-        <div className="max-w-7xl mx-auto text-center space-y-8">
-          <div>
-            <h2 className="text-3xl font-black tracking-tight text-neutral-900">Trusted By Brands & Organizations</h2>
-            <p className="text-slate-600 font-medium text-sm mt-2">Premium custom signs, corporate plaques, and displays built directly in our Box Hill studio.</p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 max-w-6xl mx-auto">
-            {SPONSOR_LOGOS.map((logo, index) => (
-              <div key={index} className="bg-white border border-neutral-200 p-3 rounded-2xl shadow-sm aspect-square flex items-center justify-center group hover:scale-105 transition-transform overflow-hidden">
-                <img src={`/images/business/${logo}`} alt="Partnered Brand" className="max-h-full max-w-full object-contain" />
+      {/* 🚀 UPGRADED SECTION: INFINITE ROLLING BRAND MARQUEE */}
+      <section className="bg-white py-10 border-t border-b border-neutral-200/50 overflow-hidden relative">
+        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#faf9f6] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#faf9f6] to-transparent z-10 pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto px-6 mb-4 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest text-neutral-400 font-mono">Trusted By Trusted Local Brands & Organizations</p>
+        </div>
+
+        <div className="relative w-full overflow-hidden flex">
+          {/* First loop and second mirrored loop combined inside the scrolling frame */}
+          <div className="animate-marquee gap-6 flex items-center">
+            {SPONSOR_LOGOS.concat(SPONSOR_LOGOS).map((logo, idx) => (
+              <div key={idx} className="h-16 w-32 bg-neutral-50 border border-neutral-150 p-2.5 rounded-xl flex items-center justify-center shrink-0 shadow-2xs hover:border-indigo-400 transition duration-300">
+                <img src={`/images/business/${logo}`} alt="Brand Logo" className="max-h-full max-w-full object-contain filter grayscale hover:grayscale-0 transition" />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Checkout Popup Form (Now featuring Color Selectors!) */}
+      {/* Checkout Popup Form */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-neutral-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white max-w-md w-full rounded-3xl p-6 relative shadow-2xl border border-neutral-100">
@@ -230,12 +249,11 @@ export default function Home() {
                   <p className="text-xs font-bold text-indigo-600 mt-0.5">{selectedProduct.name} — From ${selectedProduct.price}</p>
                 </div>
                 
-                {/* 🎨 DYNAMIC STEP: SELECT COLOR INTEGRATED IN ORDER */}
                 <div>
                   <label className="block text-[11px] font-bold text-neutral-700 uppercase tracking-wider mb-1">Select Material Finish</label>
                   <select value={chosenColor} onChange={(e) => setChosenColor(e.target.value)} className="w-full px-3 py-2 border border-neutral-200 rounded-xl text-xs bg-white font-semibold">
                     {MATERIALS.map((mat, idx) => (
-                      <option key={idx} value={mat.name}>{mat.name} ({mat.type})</option>
+                      <option key={idx} value={mat.name}>{mat.name}</option>
                     ))}
                   </select>
                 </div>
