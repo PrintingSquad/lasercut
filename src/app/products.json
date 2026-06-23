@@ -19,11 +19,11 @@
     ]
   },
   {
-    "id": "prod_house",
+    "id": "prod_house_signs",
     "category": "house-signs",
-    "name": "Modern House Number Signs",
-    "short_desc": "Big, clean street numbers cut from premium acrylic layered on timber or floating mount standoffs.",
-    "price": 79.00,
+    "name": "Premium House & Business Signs",
+    "short_desc": "Weatherproof custom outdoor plaques. Perfectly laser-cut lettering to make your home or storefront stand out.",
+    "price": 89.00,
     "images": [
       "hs_1.jpg",
       "hs_2.jpg",
@@ -35,17 +35,59 @@
 "hs_8.jpg"
     ]
   },
-  {
-    "id": "prod_names",
+ {
+    "id": "prod_script_names",
     "category": "script-names",
-    "name": "Custom 3D Script Name Signs",
-    "short_desc": "Stunning mirror gold and colored backing script plates for bedrooms, backdrops, and special events.",
-    "price": 45.00,
+    "name": "Custom Script Name Cutouts",
+    "short_desc": "Elegant flowing script names for nursery decor, birthdays, backdrops, and custom events. Available in wood or acrylic.",
+    "price": 35.00,
     "images": [
       "sn_1.jpg",
 "sn_2.jpg",
 "sn_3.jpg",
 "sn_4.jpg"
+    ]
+  },
+{
+    "id": "prod_keychains",
+    "category": "keychains",
+    "name": "Custom Acrylic Name Keychains",
+    "short_desc": "Dual-layered or deep-engraved personalization. Perfect for school bags, car keys, and custom branding gifts.",
+    "price": 12.00,
+    "images": [
+      "1.jpg",
+      "2.jpg",
+"3.jpg",
+"4.jpg",
+"5.jpg",
+"6.jpg",
+"7.jpg",
+"8.jpg",
+"9.jpg",
+"10.jpg",
+"11.jpg",
+"12.jpg"
+    ]
+  },
+  {
+    "id": "prod_earrings",
+    "category": "earrings",
+    "name": "Laser-Cut Acrylic Fashion Earrings",
+    "short_desc": "Lightweight, vibrant, and incredibly detailed statement earrings. Made with hypoallergenic premium hooks.",
+    "price": 18.00,
+    "images": [
+      "1.jpg",
+      "2.jpg",
+"3.jpg",
+"4.jpg",
+"5.jpg",
+"6.jpg",
+"7.jpg",
+"8.jpg",
+"9.jpg",
+"10.jpg",
+"11.jpg",
+"12.jpg"
     ]
   }
 ]
